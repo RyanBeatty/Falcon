@@ -1,8 +1,9 @@
 module ConnectFour.Piece where
 
 
-data Piece = Red
-           | Black
+data Piece = RedPiece
+           | BlackPiece
+        deriving (Eq)
 
 
 
