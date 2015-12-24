@@ -1,12 +1,12 @@
 import Test.Tasty
 
-import TestBoard
+import TestUtils
 
 main = defaultMain tests
 
 -- | Entire test suite
 tests :: TestTree
-tests = testGroup "Tests" [boardTests]
+tests = testGroup "Tests" [utilsTests]
 
 
 
