@@ -2,10 +2,6 @@ module ConnectFour.Utils where
 
 import Data.List
 
-checkMatrix :: ([a] -> Bool) -> [[a]] -> [Bool]
-checkMatrix f = map f
-
-
 -- | Taken from https://github.com/dmwit/universe
 -- | gets main diagonals from a 2d matrix
 -- | 1 | 2 | 3

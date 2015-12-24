@@ -38,3 +38,4 @@ test-suite test
     , tasty >= 0.11.0.2
     , tasty-smallcheck >= 0.8.1
     , smallcheck >=1.1.1
+    , tasty-quickcheck >= 0.8.4
