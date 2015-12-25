@@ -8,19 +8,8 @@ import Control.Monad
 import ConnectFour.Board
 import ConnectFour.Square
 
---import Bob
+import Utils
 
-newtype FilledBoard = FilledBoard Board
-    deriving (Show)
-
-genFilledSquare :: Gen Square
-genFilledSquare = oneof [return redSquare, return blackSquare]
-
-genFilledColumn :: Gen [Square]
-genFilledColumn = vectorOf numCols genFilledSquare
-
-instance Arbitrary FilledBoard where
-    arbitrary = liftM FilledBoard (vectorOf numRows genFilledColumn)
 
 -- | Entire test suite
 boardTests :: TestTree
