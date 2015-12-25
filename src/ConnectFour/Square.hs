@@ -2,16 +2,17 @@ module ConnectFour.Square where
 
 import ConnectFour.Piece
 
-type Square = Maybe Piece
+newtype Square = Square (Maybe Piece)
+	deriving (Eq)
 
 emptySquare :: Square
-emptySquare = Nothing
+emptySquare = Square Nothing
 
 redSquare :: Square
-redSquare = Just RedPiece
+redSquare = Square (Just RedPiece)
 
 blackSquare :: Square
-blackSquare = Just BlackPiece
+blackSquare = Square (Just BlackPiece)
 
 
 

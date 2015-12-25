@@ -3,10 +3,16 @@ module TestBoard where
 import Test.Tasty
 import Test.Tasty.QuickCheck as QC
 import Test.Tasty.HUnit
+import Control.Monad
 
 import ConnectFour.Board
 import ConnectFour.Square
 
+import Utils
+--newtype Column = Column [Square]
+
+--instance Arbitrary Column where
+--    arbitrary = liftM Column (vector numCols)
 
 -- | Entire test suite
 boardTests :: TestTree
