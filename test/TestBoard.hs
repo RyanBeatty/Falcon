@@ -20,6 +20,9 @@ boardProperties :: TestTree
 boardProperties = testGroup "Board: Properties" 
     [ QC.testProperty "fullboard is not playable" $
         \(FilledBoard board) -> checkPlayable board == False
+
+    , QC.testProperty "almost filled board is playable" $
+        \(AlmostFilledBoard board) -> checkPlayable board == True
     ]
 
 
