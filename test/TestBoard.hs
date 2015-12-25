@@ -8,11 +8,19 @@ import Control.Monad
 import ConnectFour.Board
 import ConnectFour.Square
 
-import Utils
---newtype Column = Column [Square]
+--import Bob
 
---instance Arbitrary Column where
---    arbitrary = liftM Column (vector numCols)
+newtype FilledBoard = FilledBoard Board
+    deriving (Show)
+
+genFilledSquare :: Gen Square
+genFilledSquare = oneof [return redSquare, return blackSquare]
+
+genFilledColumn :: Gen [Square]
+genFilledColumn = vectorOf numCols genFilledSquare
+
+instance Arbitrary FilledBoard where
+    arbitrary = liftM FilledBoard (vectorOf numRows genFilledColumn)
 
 -- | Entire test suite
 boardTests :: TestTree
@@ -20,7 +28,10 @@ boardTests = testGroup "Board: Tests" [boardProperties, boardHUnitTests]
 
 -- | all QuickCheck and SmallCheck property tests
 boardProperties :: TestTree
-boardProperties = testGroup "Board: Properties" []
+boardProperties = testGroup "Board: Properties" 
+    [ QC.testProperty "fullboard is not playable" $
+        \(FilledBoard board) -> checkPlayable board == False
+    ]
 
 
 -- | all HUnit tests

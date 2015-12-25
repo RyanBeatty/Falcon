@@ -3,7 +3,7 @@ module ConnectFour.Square where
 import ConnectFour.Piece
 
 newtype Square = Square (Maybe Piece)
-	deriving (Eq)
+	deriving (Show, Eq)
 
 emptySquare :: Square
 emptySquare = Square Nothing
