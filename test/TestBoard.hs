@@ -19,10 +19,13 @@ boardTests = testGroup "Board: Tests" [boardProperties, boardHUnitTests]
 boardProperties :: TestTree
 boardProperties = testGroup "Board: Properties" 
     [ QC.testProperty "fullboard is not playable" $
-        \(FilledBoard board) -> checkPlayable board == False
+        \board -> checkPlayable (filledBoard board) == False
 
     , QC.testProperty "almost filled board is playable" $
-        \(AlmostFilledBoard board) -> checkPlayable board == True
+        \board -> checkPlayable (almostFilledBoard board) == True
+
+    --, QC.testProperty "board that has a win in columns is a won board" $
+    --    \board -> checkWon (columnWonBoard board) == True
     ]
 
 
