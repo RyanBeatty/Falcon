@@ -11,5 +11,9 @@ redPiece = RedPiece
 blackPiece :: Piece
 blackPiece = BlackPiece
 
+oppositePiece :: Piece -> Piece
+oppositePiece RedPiece   = BlackPiece
+oppositePiece BlackPiece = RedPiece
+
 
 
