@@ -35,8 +35,9 @@ initialBoard = replicate numCols (replicate numRows emptySquare)
 
 ---------- Functions for Updating the Board ----------
 
-
-
+-- | Checks if a move can be made in a specified Column on the Board.
+-- | A Move can be made if the first element in the Column is an empty Square
+-- | This is because pieces are added to Columns right to left
 canMove :: Column -> Board -> Bool
 canMove column board = board !! col !! 0 == emptySquare
     where col = fromEnum column
@@ -79,7 +80,6 @@ checkWonDiagonals :: Square -> Board -> Bool
 checkWonDiagonals square = checkWonColumns square . allDiagonals
 
 -- | Checks if a player has gotten four-in-a-row on the board
--- | TODO: test
 checkWon :: Board -> Bool
 checkWon board = or 
     [ checkWonColumns redSquare board
@@ -92,7 +92,6 @@ checkWon board = or
 
 -- | Checks that the game can be continued to be played given
 -- | the state of the board
--- | TODO: test
 checkPlayable :: Board -> Bool
 checkPlayable = or . map (checkColumn)
     where checkColumn = elem emptySquare  
@@ -100,7 +99,6 @@ checkPlayable = or . map (checkColumn)
 -- | Returns the current state of the Board
 -- | checks if a player has won, if a move can be played
 -- | or if it is a draw
--- | TODO: test
 getBoardState :: Board -> BoardState
 getBoardState board
     | checkWon board       = BoardWon

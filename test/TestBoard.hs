@@ -7,6 +7,7 @@ import Control.Monad
 
 import ConnectFour.Board
 import ConnectFour.Square
+import ConnectFour.Move
 
 import Utils
 
@@ -29,12 +30,25 @@ boardProperties = testGroup "Board: Properties"
 
     , QC.testProperty "board that has a horizontal win is a won board" $
         \board -> checkWon (rowWonBoard board) == checkWonRows redSquare (rowWonBoard board) || checkWonRows blackSquare (rowWonBoard board) == True
+
+    , QC.testProperty "canMove with FilledBoard == False " $
+        \board -> (and . map (flip canMove (filledBoard board))) [(One)..(Seven)] == False
     ]
 
 
 -- | all HUnit tests
 boardHUnitTests :: TestTree
-boardHUnitTests  = testGroup "Board: Unit Tests" [testCheckPlayable, testCheckWonDiagonals]
+boardHUnitTests  = testGroup "Board: Unit Tests" 
+    [testCheckPlayable
+    , testCheckWonDiagonals
+    , testCanMove
+    ]
+
+-- | HUnit tests for canMove
+testCanMove = testGroup "canMove: HUnit Tests" $
+    [ testCase "player can move in initialBoard" $
+        (and . map (flip canMove initialBoard)) [(One)..(Seven)] @?= True
+    ]
 
 -- | HUnit tests for checkWonDiagonals
 -- | TODO: maybe try to get QuickCheck to auto-generate tests
