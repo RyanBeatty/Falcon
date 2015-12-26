@@ -38,8 +38,14 @@ boardHUnitTests  = testGroup "Board: Unit Tests" [testCheckPlayable, testCheckWo
 
 
 testCheckWonDiagonals = testGroup "checkWonDiagonals: HUnit Tests" $
-    [ testCase "check that the board is won if there is four-in-a-row on a diagonal"
-        checkWonDiagonals mainDiagonalBoard @?= True
+    [ testCase "Check that an empty board is not won on the diagonals" $
+        checkWonDiagonals redSquare initialBoard @?= False
+
+    , testCase "check that the board is won if there is four-in-a-row on a main diagonal" $
+        checkWonDiagonals redSquare mainDiagonalBoard @?= True
+
+    , testCase "Check that the board is won if ther is four-in-a-row on an antidiagonal" $
+        checkWonDiagonals blackSquare antiDiagonalBoard @?= True
     ]
     where mainDiagonalBoard = [ replicate numRows emptySquare
                               , replicate numRows emptySquare
@@ -47,6 +53,14 @@ testCheckWonDiagonals = testGroup "checkWonDiagonals: HUnit Tests" $
                               , [emptySquare, emptySquare, redSquare, emptySquare, emptySquare, emptySquare]
                               , [emptySquare, redSquare, emptySquare, emptySquare, emptySquare, emptySquare]
                               , [redSquare, emptySquare, emptySquare, emptySquare, emptySquare, emptySquare]
+                              , replicate numRows emptySquare
+                              ]
+          antiDiagonalBoard = [ replicate numRows emptySquare
+                              , replicate numRows emptySquare
+                              , [blackSquare, emptySquare, emptySquare, emptySquare, emptySquare, emptySquare]
+                              , [emptySquare, blackSquare, emptySquare, emptySquare, emptySquare, emptySquare]
+                              , [emptySquare, emptySquare, blackSquare, emptySquare, emptySquare, emptySquare]
+                              , [emptySquare, emptySquare, emptySquare, blackSquare, emptySquare, emptySquare]
                               , replicate numRows emptySquare
                               ]
 
