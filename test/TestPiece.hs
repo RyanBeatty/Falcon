@@ -1,7 +1,7 @@
-module Test.Piece where
+module TestPiece where
 
 import Test.Tasty
-import Test.HUnit
+import Test.Tasty.HUnit
 
 import ConnectFour.Piece
 
