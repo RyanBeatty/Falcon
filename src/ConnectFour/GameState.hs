@@ -19,11 +19,12 @@ initialGameState = gameState initialBoard redPiece
 
 updateGameState :: Move -> GameState -> GameState
 updateGameState move state = case getBoardState board' of
-                                Playable -> GameState board' nextPiece
-                                Won      -> GameWon (piece state) 
-                                Draw     -> GameDraw
-    where board'   = updateBoard move (board state)
-          nextPiece = oppositePiece (piece state)
+                                BoardPlayable -> GameState board' nextPiece
+                                BoardWon      -> GameWon curPiece 
+                                BoardDraw     -> GameDraw
+    where curPiece  = piece state
+          nextPiece = oppositePiece curPiece 
+          board'    = updateBoard move curPiece (board state)
 
 
 

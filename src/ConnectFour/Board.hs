@@ -6,13 +6,17 @@ import ConnectFour.Utils
 
 import Data.List
 
+
+-- | Represents a connect4 board. A Board is a list of list of Squares
 type Board = [[Square]]
 
-
-
-data BoardState = Playable
-                | Draw
-                | Won
+-- | Represents the possible states the board can be in.
+-- | BoardPlayable: A player can make a move
+-- | BoardDraw: The Board is full
+-- | BoardWon: A Player has gotten four-in-a-row
+data BoardState = BoardPlayable
+                | BoardDraw
+                | BoardWon
                   
 -- | Number of Rows in the Board
 numRows :: Int
@@ -77,7 +81,7 @@ checkPlayable = or . map (checkColumn)
 -- | TODO: test
 getBoardState :: Board -> BoardState
 getBoardState board
-    | checkWon board       = Won
-    | checkPlayable  board = Playable
-    | otherwise            = Draw
+    | checkWon board       = BoardWon
+    | checkPlayable  board = BoardPlayable
+    | otherwise            = BoardDraw
 
