@@ -38,7 +38,7 @@ initialBoard = replicate numCols (replicate numRows emptySquare)
 
 -- | checks if a color has gotten four-in-a-row in any columns
 checkWonColumns :: Square -> Board -> Bool
-checkWonColumns square = or . map (checkColumn square)
+checkWonColumns square = any (checkColumn square)
     where checkColumn square = isInfixOf (replicate 4 square)
 
 -- | to check the rows for a winner, transpose the matrix
