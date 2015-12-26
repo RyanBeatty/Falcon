@@ -36,23 +36,31 @@ initialBoard = replicate numCols (replicate numRows emptySquare)
 --    | not canMove board col = Nothing
 --    | otherwise             =
 
+-- | checks if a color has gotten four-in-a-row in any columns
+checkWonColumns :: Square -> Board -> Bool
+checkWonColumns square = or . map (checkColumn square)
+    where checkColumn square = isInfixOf (replicate 4 square)
+
+-- | to check the rows for a winner, transpose the matrix
+-- | so the rows are now columns, and call checkRows
+checkWonRows :: Square -> Board -> Bool
+checkWonRows square = checkWonColumns square . transpose
+
+-- | Gets all of the diagonals of the board and checks for a winner
+checkWonDiagonals :: Square -> Board -> Bool
+checkWonDiagonals square = checkWonColumns square . allDiagonals
+
 -- | Checks if a player has gotten four-in-a-row on the board
 -- | TODO: test
 checkWon :: Board -> Bool
-checkWon board = or [checkColumns redSquare board, checkColumns blackSquare board, checkRows redSquare board, checkRows blackSquare board, checkDiagonals redSquare board, checkDiagonals blackSquare board]
-    where 
-          -- | Checks if a color has gotten four-in-a-row in a row
-          checkRow color = isInfixOf (replicate 4 color)
-
-          -- | checks if a color has gotten four-in-a-row in any row
-          checkRows color = or . map (checkRow color)
-
-          -- | to check the columns for a winner, transpose the matrix
-          -- | so the columns are now rows, and call checkRows
-          checkColumns color = checkRows color . transpose
-
-          -- | Gets all of the diagonals of the board and checks for a winner
-          checkDiagonals color = checkRows color . allDiagonals
+checkWon board = or 
+    [checkWonColumns redSquare board
+    , checkWonColumns blackSquare board
+    , checkWonRows redSquare board
+    , checkWonRows blackSquare board
+    , checkWonDiagonals redSquare board
+    , checkWonDiagonals blackSquare board
+    ]
 
 -- | Checks that the game can be continued to be played given
 -- | the state of the board

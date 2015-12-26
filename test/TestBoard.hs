@@ -25,10 +25,10 @@ boardProperties = testGroup "Board: Properties"
         \board -> checkPlayable (almostFilledBoard board) == True
 
     , QC.testProperty "board that has a vertical win is a won board" $
-        \board -> checkWon (columnWonBoard board) == True
+        \board -> checkWon (columnWonBoard board) == checkWonColumns redSquare (columnWonBoard board) || checkWonColumns blackSquare (columnWonBoard board)
 
-    --, QC.testProperty "board that has a horizontal win is a won board" $
-    --    \board -> checkWon (rowWonBoard board) == True
+    , QC.testProperty "board that has a horizontal win is a won board" $
+        \board -> checkWon (rowWonBoard board) == checkWonRows redSquare (rowWonBoard board) || checkWonRows blackSquare (rowWonBoard board)
     ]
 
 
