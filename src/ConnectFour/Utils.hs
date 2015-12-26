@@ -27,10 +27,11 @@ diagonals = tail . go [] where
 antiDiagonals :: [[a]] -> [[a]]
 antiDiagonals = diagonals . map reverse
 
+-- | Gets all of the diagonals in a matrix
 allDiagonals :: [[a]] -> [[a]]
 allDiagonals xss = (diagonals xss) ++ (antiDiagonals xss)
 
-
+-- | Replaces the nth element in the list with a new element
 replaceNth :: Int -> a -> [a] -> [a]
 replaceNth n element xs = (init as) ++ [element] ++ bs
 	where (as, bs) = splitAt n xs

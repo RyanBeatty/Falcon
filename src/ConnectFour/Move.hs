@@ -12,7 +12,8 @@ data Column = One
 			| Seven
 		deriving (Show, Enum)
 
-
+-- | A Move has a Piece to place and
+-- | Column number to place the piece
 data Move = Move 
 	{ piece  :: Piece
 	, column :: Column
