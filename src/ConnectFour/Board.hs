@@ -54,7 +54,7 @@ checkWonDiagonals square = checkWonColumns square . allDiagonals
 -- | TODO: test
 checkWon :: Board -> Bool
 checkWon board = or 
-    [checkWonColumns redSquare board
+    [ checkWonColumns redSquare board
     , checkWonColumns blackSquare board
     , checkWonRows redSquare board
     , checkWonRows blackSquare board

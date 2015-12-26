@@ -34,14 +34,26 @@ boardProperties = testGroup "Board: Properties"
 
 -- | all HUnit tests
 boardHUnitTests :: TestTree
-boardHUnitTests  = testGroup "Board: Unit Tests" [testCheckPlayable]
+boardHUnitTests  = testGroup "Board: Unit Tests" [testCheckPlayable, testCheckWonDiagonals]
 
+
+testCheckWonDiagonals = testGroup "checkWonDiagonals: HUnit Tests" $
+    [ testCase "check that the board is won if there is four-in-a-row on a diagonal"
+        checkWonDiagonals mainDiagonalBoard @?= True
+    ]
+    where mainDiagonalBoard = [ replicate numRows emptySquare
+                              , replicate numRows emptySquare
+                              , [emptySquare, emptySquare, emptySquare, redSquare, emptySquare, emptySquare]
+                              , [emptySquare, emptySquare, redSquare, emptySquare, emptySquare, emptySquare]
+                              , [emptySquare, redSquare, emptySquare, emptySquare, emptySquare, emptySquare]
+                              , [redSquare, emptySquare, emptySquare, emptySquare, emptySquare, emptySquare]
+                              , replicate numRows emptySquare
+                              ]
 
 -- | Tests that boards that are not full are playable.
 -- | Boards that are full are not playable
-testCheckPlayable = testGroup "CheckPlayable: HUnit Tests" 
-    [
-    testCase "check that board is playable in initial state" $
+testCheckPlayable = testGroup "checkPlayable: HUnit Tests" 
+    [ testCase "check that board is playable in initial state" $
         checkPlayable initialBoard @?= True
 
     , testCase "check that board is not playable when full" $
