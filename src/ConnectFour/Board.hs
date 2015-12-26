@@ -14,13 +14,15 @@ data BoardState = Playable
                 | Draw
                 | Won
                   
-
+-- | Number of Rows in the Board
 numRows :: Int
 numRows = 6
 
+-- | Number of Columns in the Board
 numCols :: Int
 numCols = 7
 
+-- | Initial Board state. An initial Board is just empty
 initialBoard :: Board
 initialBoard = replicate numCols (replicate numRows emptySquare)
 

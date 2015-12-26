@@ -36,7 +36,8 @@ boardProperties = testGroup "Board: Properties"
 boardHUnitTests :: TestTree
 boardHUnitTests  = testGroup "Board: Unit Tests" [testCheckPlayable, testCheckWonDiagonals]
 
-
+-- | HUnit tests for checkWonDiagonals
+-- | TODO: maybe try to get QuickCheck to auto-generate tests
 testCheckWonDiagonals = testGroup "checkWonDiagonals: HUnit Tests" $
     [ testCase "Check that an empty board is not won on the diagonals" $
         checkWonDiagonals redSquare initialBoard @?= False
