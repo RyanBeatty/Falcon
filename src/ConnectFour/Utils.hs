@@ -32,9 +32,10 @@ allDiagonals :: [[a]] -> [[a]]
 allDiagonals xss = (diagonals xss) ++ (antiDiagonals xss)
 
 -- | Replaces the nth element in the list with a new element
+-- | NOTE: assumes n is zero-indexed
 replaceNth :: Int -> a -> [a] -> [a]
 replaceNth n element xs = (init as) ++ [element] ++ bs
-	where (as, bs) = splitAt n xs
+	where (as, bs) = splitAt (n+1) xs
 
 
 
