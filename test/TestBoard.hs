@@ -24,8 +24,8 @@ boardProperties = testGroup "Board: Properties"
     , QC.testProperty "almost filled board is playable" $
         \board -> checkPlayable (almostFilledBoard board) == True
 
-    --, QC.testProperty "board that has a win in columns is a won board" $
-    --    \board -> checkWon (columnWonBoard board) == True
+    , QC.testProperty "board that has a win in columns is a won board" $
+        \board -> checkWon (columnWonBoard board) == True
     ]
 
 
