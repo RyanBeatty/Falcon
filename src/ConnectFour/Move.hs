@@ -13,7 +13,10 @@ data Column = One
 		deriving (Show, Enum)
 
 
-data Move = Move Piece Column
+data Move = Move 
+	{ piece  :: Piece
+	, column :: Column
+	}
 
 
 

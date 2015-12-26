@@ -33,14 +33,36 @@ initialBoard = replicate numCols (replicate numRows emptySquare)
 
 
 
---canMove :: Board -> Column -> Bool
---canMove board col = board !! c !! 0 == emptySquare
---    where c = fromEnum col
+---------- Functions for Updating the Board ----------
 
---updateBoard :: Board -> Column -> Maybe Board
---updateBoard board col
---    | not canMove board col = Nothing
---    | otherwise             =
+
+
+canMove :: Column -> Board -> Bool
+canMove column board = board !! col !! 0 == emptySquare
+    where col = fromEnum column
+    
+placeSquareInColumn :: Square -> [Square] -> [Square]
+placeSquareInColumn square column = replaceNth insertIndex square column
+    where insertIndex = length . takeWhile (==emptySquare) $ column
+
+placeSquareInBoard :: Square -> Column -> Board -> Board
+placeSquareInBoard square column board = replaceNth colIndex newCol board
+    where colIndex = fromEnum column
+          col      = board !! colIndex
+          newCol   = placeSquareInColumn square col
+
+
+updateBoard :: Move -> Board -> Maybe Board
+updateBoard move board 
+    | canMove col board = Just (placeSquareInBoard newSquare col board)
+    | otherwise         = Nothing 
+    where newPiece  = piece move
+          newSquare = square (Just newPiece)
+          col       = column move 
+
+
+
+---------- Functions for Checking the BoardState ----------
 
 -- | checks if a color has gotten four-in-a-row in any columns
 checkWonColumns :: Square -> Board -> Bool

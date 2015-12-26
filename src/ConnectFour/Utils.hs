@@ -31,6 +31,11 @@ allDiagonals :: [[a]] -> [[a]]
 allDiagonals xss = (diagonals xss) ++ (antiDiagonals xss)
 
 
+replaceNth :: Int -> a -> [a] -> [a]
+replaceNth n element xs = (init as) ++ [element] ++ bs
+	where (as, bs) = splitAt n xs
+
+
 
 
 
