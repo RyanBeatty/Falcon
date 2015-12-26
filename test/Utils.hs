@@ -30,12 +30,12 @@ instance Arbitrary Square where
 
 -- | Arbitrary generator for FilledBoard. generates a random, non-empty board
 instance Arbitrary FilledBoard where
-    arbitrary = liftM FilledBoard (vectorOf numCols genFilledColumn)
+    arbitrary = liftM FilledBoard (vectorOf numCols $ genFilledList numRows)
 
 -- | Arbitrary generator for AlmostFilledBoard. Generates a board that has a few empty squares
 instance Arbitrary AlmostFilledBoard where
     arbitrary = liftM AlmostFilledBoard (generator >>= shuffle)
-        where generator = liftM2 (:) genAlmostFilledColumn (vectorOf (numCols-1) genFilledColumn)
+        where generator = liftM2 (:) genAlmostFilledColumn (vectorOf (numCols-1) $ genFilledList numRows)
 
 -- | Arbitrary generator for ColumnWonBoard.
 -- | Generates a board that will always have a column with a four-in-a-row sequence
@@ -47,9 +47,10 @@ instance Arbitrary ColumnWonBoard where
 genFilledSquare :: Gen Square
 genFilledSquare = oneof [return redSquare, return blackSquare]
 
--- | Generates a column of filled squares
-genFilledColumn :: Gen [Square]
-genFilledColumn = vectorOf numRows genFilledSquare
+-- | Generates a list of filled squares
+-- | :len: The length of the generated list
+genFilledList :: Int -> Gen [Square]
+genFilledList len = vectorOf len genFilledSquare
 
 -- | Generates a column of random squares where one random square is empty
 genAlmostFilledColumn :: Gen [Square]
