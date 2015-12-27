@@ -34,7 +34,7 @@ boardProperties = testGroup "Board: Properties"
     , QC.testProperty "canMove with FilledBoard == False " $
         \board -> (and . map (flip canMove (filledBoard board))) [(One)..(Seven)] == False
 
-    , QC.testProperty "placeSquareInColumn s xs == xs !! s" $
+    , QC.testProperty "Test that placeSquareInColumn works for multiple inserts" $
         forAll (choose (1, numRows-1)) $ \n -> ((!! n) . iterate (placeSquareInColumn redSquare)) (replicate numRows emptySquare) == (replicate (numRows-n) emptySquare) ++ (replicate n redSquare)
     ]
 

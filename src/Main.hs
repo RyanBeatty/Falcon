@@ -1,6 +1,6 @@
 
 
-import ConnectFour.Board
+import ConnectFour
 
 main :: IO ()
 main = print "Hello, World!"

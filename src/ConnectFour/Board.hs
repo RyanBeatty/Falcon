@@ -42,6 +42,8 @@ canMove :: Column -> Board -> Bool
 canMove column board = board !! col !! 0 == emptySquare
     where col = fromEnum column
     
+-- | Places a Square in the next empty slot in a Column.
+-- | NOTE: throws error if the column is full
 placeSquareInColumn :: Square -> [Square] -> [Square]
 placeSquareInColumn square column = replaceNth insertIndex square column
     where insertIndex = (length . takeWhile (==emptySquare) $ column) - 1
