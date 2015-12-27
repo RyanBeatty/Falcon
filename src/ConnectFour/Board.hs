@@ -44,7 +44,7 @@ canMove column board = board !! col !! 0 == emptySquare
     
 placeSquareInColumn :: Square -> [Square] -> [Square]
 placeSquareInColumn square column = replaceNth insertIndex square column
-    where insertIndex = length . takeWhile (==emptySquare) $ column
+    where insertIndex = (length . takeWhile (==emptySquare) $ column) - 1
 
 placeSquareInBoard :: Square -> Column -> Board -> Board
 placeSquareInBoard square column board = replaceNth colIndex newCol board

@@ -33,6 +33,9 @@ boardProperties = testGroup "Board: Properties"
 
     , QC.testProperty "canMove with FilledBoard == False " $
         \board -> (and . map (flip canMove (filledBoard board))) [(One)..(Seven)] == False
+
+    , QC.testProperty "placeSquareInColumn s xs == xs !! s" $
+        forAll (choose (1, numRows-1)) $ \n -> ((!! n) . iterate (placeSquareInColumn redSquare)) (replicate numRows emptySquare) == (replicate (numRows-n) emptySquare) ++ (replicate n redSquare)
     ]
 
 
@@ -42,6 +45,7 @@ boardHUnitTests  = testGroup "Board: Unit Tests"
     [testCheckPlayable
     , testCheckWonDiagonals
     , testCanMove
+    --, testPlaceSquareInColumn
     ]
 
 -- | HUnit tests for canMove
@@ -49,6 +53,12 @@ testCanMove = testGroup "canMove: HUnit Tests" $
     [ testCase "player can move in initialBoard" $
         (and . map (flip canMove initialBoard)) [(One)..(Seven)] @?= True
     ]
+
+--testPlaceSquareInColumn = testGroup "placeSquareInColumn: HUnit Tests" $
+--    [ testCase "Tests that placeSquareInColumn n times filles up Column" $
+--        ((!! numRows) . iterate (placeSquareInColumn blackSquare)) (replicate numRows emptySquare) @?= replicate numRows blackSquare
+--    ]
+--    where 
 
 -- | HUnit tests for checkWonDiagonals
 -- | TODO: maybe try to get QuickCheck to auto-generate tests
