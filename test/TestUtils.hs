@@ -12,7 +12,11 @@ utilsTests = testGroup "Utils: Tests" [utilsProperties, utilsHUnitTests]
 
 -- | all QuickCheck and SmallCheck property tests
 utilsProperties :: TestTree
-utilsProperties = testGroup "Utils: Properties" []
+utilsProperties = testGroup "Utils: Properties" 
+    [ QC.testProperty "(replaceNth n e xs) !! n == e" $
+        \(NonEmpty xs) -> forAll (choose (0, (length xs)-1)) $ \n e -> (replaceNth n e xs) !! n == (e :: Int)
+
+    ]
 
 
 -- | all HUnit tests
