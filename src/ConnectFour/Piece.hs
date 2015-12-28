@@ -9,6 +9,9 @@ instance Show Piece where
     show RedPiece   = "R"
     show BlackPiece = "B"
 
+pieceString :: Piece -> String
+pieceString RedPiece   = "Red"
+pieceString BlackPiece = "Black"
 
 -- | Constructs a new RedPiece
 redPiece :: Piece
