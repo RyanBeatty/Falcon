@@ -3,4 +3,7 @@
 import ConnectFour
 
 main :: IO ()
-main = print "Hello, World!"
+main = displayBoard initialBoard
+
+displayBoard :: Board -> IO ()
+displayBoard = putStr . showBoard

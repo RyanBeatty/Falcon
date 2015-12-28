@@ -19,7 +19,7 @@ data BoardState = BoardPlayable
                 | BoardWon
 
 showBoard :: Board -> String
-showBoard = unlines . transpose . map concat . map (map show)
+showBoard = unlines . (['1'..'7'] :) . map concat . map (map show) . transpose
                   
 -- | Number of Rows in the Board
 numRows :: Int
