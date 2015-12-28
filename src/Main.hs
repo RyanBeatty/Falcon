@@ -16,6 +16,19 @@ gameLoop gstate = case gstate of
                     (GameDraw)       -> putStrLn "Its a draw!"
 
 
+getMove :: GameState -> IO (Move)
+getMove gstate = do displayBoard (board gstate)
+                    putStr $ (pieceString curPlayer)++ " Player, choose a column number to move: "
+                    columnChoice <- getLine >>= return . readColumn
+                    let validColumn = maybe False (flip elem moves) columnChoice
+                    if validColumn then
+                        (\(Just column) -> return $ move column curPlayer) columnChoice
+                        else do putStrLn "Invalid Move. Please choose another move"
+                                getMove gstate
+    where curPlayer = activePlayer gstate
+          moves = validColumns gstate 
+
+
 makeMove :: GameState -> IO (GameState)
 makeMove gstate = do displayBoard (board gstate)
                      let curPlayer = activePlayer gstate

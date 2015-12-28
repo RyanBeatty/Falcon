@@ -17,6 +17,9 @@ gameState = GameState
 initialGameState :: GameState
 initialGameState = gameState initialBoard redPiece 
 
+validColumns :: GameState -> [Column]
+validColumns gstate = emptyColumns (board gstate)
+
 
 updateGameState :: Column -> GameState -> Maybe GameState
 updateGameState column state = board' >>= \brd -> case getBoardState brd of

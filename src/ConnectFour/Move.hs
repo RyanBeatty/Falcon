@@ -10,7 +10,7 @@ data Column = One
             | Five
             | Six
             | Seven
-        deriving (Show, Enum)
+        deriving (Show, Enum, Eq)
 
 readColumn :: String -> Maybe Column
 readColumn "1" = Just One

@@ -110,3 +110,8 @@ getBoardState board
     | checkPlayable  board = BoardPlayable
     | otherwise            = BoardDraw
 
+
+
+emptyColumns :: Board -> [Column]
+emptyColumns board = filter (flip canMove board) [(One)..(Seven)]
+
