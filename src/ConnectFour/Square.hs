@@ -4,7 +4,11 @@ import ConnectFour.Piece
 
 -- | A Square can either have a Piece or be empty
 newtype Square = Square (Maybe Piece)
-	deriving (Show, Eq)
+    deriving (Eq)
+
+instance Show Square where
+    show (Square Nothing)  = "."
+    show (Square (Just p)) = show p
 
 -- | Constructs a new non-empty Square from the passed in Piece
 square :: Maybe Piece -> Square

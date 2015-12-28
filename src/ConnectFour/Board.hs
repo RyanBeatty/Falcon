@@ -17,6 +17,9 @@ type Board = [[Square]]
 data BoardState = BoardPlayable
                 | BoardDraw
                 | BoardWon
+
+showBoard :: Board -> String
+showBoard = unlines . transpose . map concat . map (map show)
                   
 -- | Number of Rows in the Board
 numRows :: Int
