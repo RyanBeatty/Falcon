@@ -11,11 +11,12 @@ main = do hSetBuffering stdout NoBuffering
           
 gameLoop :: GameState -> IO ()
 gameLoop gstate = case gstate of
-                    (GameState _ _)  -> makeMove gstate >>= gameLoop
+                    (GameState _ _)  -> getMove gstate >>= return . updateGameState gstate >>= maybe (gameLoop gstate) (gameLoop)
                     (GameWon player) -> putStrLn $ (pieceString player) ++ " Player has won!"
                     (GameDraw)       -> putStrLn "Its a draw!"
 
-
+-- | Displays the board and continues to prompt the user to
+-- | enter a move until they enter in a valid move
 getMove :: GameState -> IO (Move)
 getMove gstate = do displayBoard (board gstate)
                     putStr $ (pieceString curPlayer)++ " Player, choose a column number to move: "
@@ -28,20 +29,7 @@ getMove gstate = do displayBoard (board gstate)
     where curPlayer = activePlayer gstate
           moves = validColumns gstate 
 
-
-makeMove :: GameState -> IO (GameState)
-makeMove gstate = do displayBoard (board gstate)
-                     let curPlayer = activePlayer gstate
-                     putStr $ (pieceString curPlayer)++ " Player, choose a column number to move: "
-                     colChoice <- getLine
-                     let column = readColumn colChoice
-
-                     let nextState = column >>= (flip updateGameState gstate)
-                     case nextState of
-                         Nothing         -> do putStrLn "Invalid move"
-                                               makeMove gstate
-                         (Just nextSate) -> return nextSate
-
+-- | Prints the board to the screen
 displayBoard :: Board -> IO ()
 displayBoard = putStr . ("\n" ++) . showBoard
 

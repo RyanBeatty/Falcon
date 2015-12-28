@@ -14,22 +14,23 @@ data GameState = GameWon Piece
 gameState :: Board -> Piece -> GameState
 gameState = GameState
 
+-- | initial state of the game
 initialGameState :: GameState
 initialGameState = gameState initialBoard redPiece 
 
+-- | Returns a list of valid columns to place a piece in
 validColumns :: GameState -> [Column]
 validColumns gstate = emptyColumns (board gstate)
 
-
-updateGameState :: Column -> GameState -> Maybe GameState
-updateGameState column state = board' >>= \brd -> case getBoardState brd of
+-- | Makes a move and updates the state of the game
+updateGameState :: GameState -> Move -> Maybe GameState
+updateGameState state move = board' >>= \brd -> case getBoardState brd of
                                                   BoardPlayable -> Just $ GameState brd nextPlayer
                                                   BoardWon      -> Just $ GameWon curPlayer 
                                                   BoardDraw     -> Just $ GameDraw
     where curPlayer  = activePlayer state
           nextPlayer = oppositePiece curPlayer 
-          move'      = move column curPlayer
-          board'     = updateBoard move' (board state)
+          board'     = updateBoard move (board state)
 
 
 

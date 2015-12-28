@@ -110,8 +110,7 @@ getBoardState board
     | checkPlayable  board = BoardPlayable
     | otherwise            = BoardDraw
 
-
-
+-- | Returns a list of the empty columns on the board
 emptyColumns :: Board -> [Column]
 emptyColumns board = filter (flip canMove board) [(One)..(Seven)]
 
