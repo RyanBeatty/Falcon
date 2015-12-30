@@ -5,6 +5,8 @@ import ConnectFour
 import Data.Maybe
 import System.IO
 
+-- | Sets STDOUT to have no buffering
+-- | Starts main gameloop with initial state
 main :: IO ()
 main = do hSetBuffering stdout NoBuffering
           gameLoop initialGameState
