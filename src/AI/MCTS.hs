@@ -5,6 +5,7 @@ import ConnectFour.GameState (GameState)
 import Data.Tree
 import Data.Tree.Zipper
 import Data.List
+import System.Random.MWC
 
 data SearchNode = TerminalNode 
                 { state :: GameState
@@ -17,28 +18,30 @@ data SearchNode = TerminalNode
 
 type SearchTree = Tree SearchNode
 
-mctsSearch :: TreePos Full SearchNode -> TreePos Full SearchNode
-mctsSearch = backUp . defaultPolicy . treePolicy
+mctsSearch :: Gen s -> TreePos Full SearchNode -> (Gen s, TreePos Full SearchNode)
+mctsSearch = (,) . backUp . defaultPolicy . treePolicy
 
 ------------------methods implementing treePolicy------------------
 
 -- | Search faze of a single iteration of MCTS. Decends down the tree
 -- | deciding until it finds either a terminal node or a node that is not
 -- | fully expanded.
-treePolicy :: TreePos Full SearchNode -> TreePos Full SearchNode
-treePolicy searchTree
+treePolicy :: Gen s -> TreePos Full SearchNode -> (Gen s, TreePos Full SearchNode)
+treePolicy gen searchTree
   -- If a node is a TerminalNode, then stop search
-  | isTerminal tree'      = searchTree
+  | isTerminal tree'      = (gen, searchTree)
 
   -- If a Node is FullyExpanded, then continue search with its best child
-  | isFullyExpanded tree' = treePolicy bChild
+  | isFullyExpanded tree' = treePolicy gen bChild
 
   -- otherwise, expand the current node and stop search
-  | otherwise     = modifyTree expand searchTree
-  where tree'     = tree searchTree
-        bcIndex   = bestChildIndex $ tree searchTree
-        bChild    = case childAt bcIndex searchTree of
-                        (Just child) -> child 
+  | otherwise             = (newGen, modifyTree (expand newNode) searchTree)
+  
+  where tree'             = tree searchTree
+        bcIndex           = bestChildIndex $ tree searchTree
+        bChild            = case childAt bcIndex searchTree of
+                                (Just child) -> child
+        (newGen, newNode) = chooseAction gen tree'   
 
 isTerminal :: SearchTree -> Bool
 isTerminal = undefined
@@ -58,15 +61,11 @@ bestChildIndex :: SearchTree -> Int
 bestChildIndex = undefined
 
 
-expand :: SearchTree -> SearchTree
-expand searchTree = addChild newAction searchTree
-    where newAction = chooseAction searchTree
+expand :: SearchNode -> SearchTree -> SearchTree
+expand newNode searchTree = undefined
 
-chooseAction :: SearchTree -> SearchNode
-chooseAction = undefined
-
-addChild :: SearchNode -> SearchTree -> SearchTree
-addChild = undefined
+chooseAction :: Gen s -> SearchTree -> (Gen s, SearchNode)
+chooseAction gen node = undefined 
 
 
 ------------------Methods implementing defaultPolicy------------------
