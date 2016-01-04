@@ -17,8 +17,10 @@ data SearchNode = TerminalNode
 
 type SearchTree = Tree SearchNode
 
---mctsSearch :: GameTree -> Game
---mctsSearch root = backUp . defaultPolicy . treePolicy
+mctsSearch :: TreePos Full SearchNode -> TreePos Full SearchNode
+mctsSearch = backUp . defaultPolicy . treePolicy
+
+------------------methods implementing treePolicy------------------
 
 -- | Search faze of a single iteration of MCTS. Decends down the tree
 -- | deciding until it finds either a terminal node or a node that is not
@@ -57,6 +59,21 @@ bestChild = undefined
 bestChildIndex :: SearchTree -> Int
 --bestChildIndex = elemIndex . bestChild
 bestChildIndex = undefined
+
+
+------------------Methods implementing defaultPolicy------------------
+
+defaultPolicy = undefined
+
+
+
+
+
+
+
+------------------Methods implementing backUp------------------
+
+backUp = undefined
 
 
 
