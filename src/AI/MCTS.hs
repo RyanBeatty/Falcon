@@ -40,9 +40,6 @@ treePolicy searchTree
         bChild    = case childAt bcIndex searchTree of
                         (Just child) -> child 
 
-expand :: SearchTree -> SearchTree
-expand = undefined
-
 isTerminal :: SearchTree -> Bool
 isTerminal = undefined
 
@@ -59,6 +56,17 @@ bestChild = undefined
 bestChildIndex :: SearchTree -> Int
 --bestChildIndex = elemIndex . bestChild
 bestChildIndex = undefined
+
+
+expand :: SearchTree -> SearchTree
+expand searchTree = addChild newAction searchTree
+    where newAction = chooseAction searchTree
+
+chooseAction :: SearchTree -> SearchNode
+chooseAction = undefined
+
+addChild :: SearchNode -> SearchTree -> SearchTree
+addChild = undefined
 
 
 ------------------Methods implementing defaultPolicy------------------
