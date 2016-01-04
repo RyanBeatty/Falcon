@@ -25,21 +25,18 @@ type SearchTree = Tree SearchNode
 -- | fully expanded.
 treePolicy :: TreePos Full SearchNode -> TreePos Full SearchNode
 treePolicy searchTree
+  -- If a node is a TerminalNode, then stop search
   | isTerminal tree'      = searchTree
-  | isFullyExpanded tree' = treePolicy $ focusNthChild bcIndex searchTree
-  | otherwise             = modifyTree expand searchTree
-  where tree'   = tree searchTree
-        bcIndex = bestChildIndex $ tree searchTree
 
-focusNthChild :: Int -> TreePos Full SearchNode -> TreePos Full SearchNode
-focusNthChild n tree = case childAt n tree of
-                        (Just child) -> child
+  -- If a Node is FullyExpanded, then continue search with its best child
+  | isFullyExpanded tree' = treePolicy bChild
 
---treePolicy :: SearchTree -> SearchTree
---treePolicy gtree
---    | isTerminal      = gtree
---    | isFullyExpanded = treePolicy $ bestChild gtree
---    | otherwise       = expand gtree
+  -- otherwise, expand the current node and stop search
+  | otherwise     = modifyTree expand searchTree
+  where tree'     = tree searchTree
+        bcIndex   = bestChildIndex $ tree searchTree
+        bChild    = case childAt bcIndex searchTree of
+                        (Just child) -> child 
 
 expand :: SearchTree -> SearchTree
 expand = undefined
