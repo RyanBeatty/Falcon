@@ -91,10 +91,11 @@ expand searchTree gen = undefined
 -- | Chooses a new action to take using the rng and based off
 -- | of which actions have already been chosen 
 chooseAction :: SearchTree -> StdGen -> (Action, StdGen)
-chooseAction searchTree gen = undefined
-    where chosen   = getChildrenActions searchTree
-          possible = possibleActions searchTree
-          actions  = [a | a<-possible, not $ a `elem` chosen] 
+chooseAction searchTree gen = (actions !! choice, newGen)
+    where chosen           = getChildrenActions searchTree
+          possible         = possibleActions searchTree
+          actions          = [a | a<-possible, not $ a `elem` chosen]
+          (choice, newGen) = randomR (0, length actions - 1) gen 
 
 -- | Returns a list of all the chosen actions from a root node 
 getChildrenActions :: SearchTree -> [Action]
