@@ -44,7 +44,7 @@ treePolicy gen searchTree
         bcIndex           = bestChildIndex $ tree searchTree
         bChild            = case childAt bcIndex searchTree of
                                 (Just child) -> child
-        (newGen, newNode) = chooseAction gen tree'   
+        (newNode, newGen) = chooseAction gen tree'   
 
 isTerminal :: SearchTree -> Bool
 isTerminal = undefined
@@ -67,9 +67,8 @@ bestChildIndex = undefined
 expand :: SearchNode -> SearchTree -> SearchTree
 expand newNode searchTree = undefined
 
-chooseAction :: StdGen -> SearchTree -> (StdGen, SearchNode)
+chooseAction :: StdGen -> SearchTree -> (SearchNode, StdGen)
 chooseAction gen searchTree = undefined
-    where
 
 --genChoice :: StdGen -> (Int, StdGen)  
 
