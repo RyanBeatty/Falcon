@@ -27,7 +27,7 @@ readColumn _   = Nothing
 data Move = Move 
     { column :: Column
     , piece  :: Piece
-    }
+    } deriving (Show, Eq)
 
 move :: Column -> Piece -> Move
 move = Move 
