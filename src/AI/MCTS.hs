@@ -5,7 +5,7 @@ import ConnectFour.GameState (GameState)
 import Data.Tree
 import Data.Tree.Zipper
 import Data.List
-import System.Random.MWC
+import System.Random
 
 data SearchNode = TerminalNode 
                 { state :: GameState
@@ -18,7 +18,10 @@ data SearchNode = TerminalNode
 
 type SearchTree = Tree SearchNode
 
-mctsSearch :: Gen s -> TreePos Full SearchNode -> (Gen s, TreePos Full SearchNode)
+--gameNode :: Int -> Int -> Move -> SearchNode
+--gameNode = undefined 
+
+mctsSearch :: StdGen -> TreePos Full SearchNode -> (StdGen, TreePos Full SearchNode)
 mctsSearch = (,) . backUp . defaultPolicy . treePolicy
 
 ------------------methods implementing treePolicy------------------
@@ -26,7 +29,7 @@ mctsSearch = (,) . backUp . defaultPolicy . treePolicy
 -- | Search faze of a single iteration of MCTS. Decends down the tree
 -- | deciding until it finds either a terminal node or a node that is not
 -- | fully expanded.
-treePolicy :: Gen s -> TreePos Full SearchNode -> (Gen s, TreePos Full SearchNode)
+treePolicy :: StdGen -> TreePos Full SearchNode -> (StdGen, TreePos Full SearchNode)
 treePolicy gen searchTree
   -- If a node is a TerminalNode, then stop search
   | isTerminal tree'      = (gen, searchTree)
@@ -64,8 +67,11 @@ bestChildIndex = undefined
 expand :: SearchNode -> SearchTree -> SearchTree
 expand newNode searchTree = undefined
 
-chooseAction :: Gen s -> SearchTree -> (Gen s, SearchNode)
-chooseAction gen node = undefined 
+chooseAction :: StdGen -> SearchTree -> (StdGen, SearchNode)
+chooseAction gen searchTree = undefined
+    where
+
+--genChoice :: StdGen -> (Int, StdGen)  
 
 
 ------------------Methods implementing defaultPolicy------------------
