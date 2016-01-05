@@ -38,16 +38,16 @@ mctsSearch = (,) . backUp . defaultPolicy . treePolicy
 -- | Search faze of a single iteration of MCTS. Decends down the tree
 -- | deciding until it finds either a terminal node or a node that is not
 -- | fully expanded.
-treePolicy :: StdGen -> TreePos Full SearchNode -> (StdGen, TreePos Full SearchNode)
+treePolicy :: StdGen -> TreePos Full SearchNode -> (TreePos Full SearchNode, StdGen)
 treePolicy gen searchTree
   -- If a node is a TerminalNode, then stop search
-  | isTerminal tree'      = (gen, searchTree)
+  | isTerminal tree'      = (searchTree, gen)
 
   -- If a Node is FullyExpanded, then continue search with its best child
   | isFullyExpanded tree' = treePolicy gen bChild
 
   -- otherwise, expand the current node and stop search
-  | otherwise             = (newGen, modifyTree (expand newNode) searchTree)
+  | otherwise             = expand searchTree gen
 
   where tree'            = tree searchTree
         
@@ -79,8 +79,12 @@ bestChildIndex :: SearchTree -> Int
 bestChildIndex = undefined
 
 
-expand :: SearchNode -> SearchTree -> SearchTree
-expand newNode searchTree = undefined
+
+------------------Methods implementing expand------------------
+
+
+expand :: TreePos Full SearchNode -> StdGen -> (TreePos Full SearchNode, StdGen)
+expand searchTree gen = undefined
 
 chooseAction :: SearchTree -> StdGen -> (Action, StdGen)
 chooseAction searchTree gen = undefined
