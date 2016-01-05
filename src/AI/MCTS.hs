@@ -1,6 +1,7 @@
 module MCTS where
 
 import ConnectFour.GameState (GameState)
+import ConnectFour.Move (Move, Column)
 
 import Data.Tree
 import Data.Tree.Zipper
@@ -13,13 +14,14 @@ data SearchNode = TerminalNode
                 | SearchNode 
                 { value      :: Int
                 , visitCount :: Int
+                , action     :: Move
                 , state      :: GameState
                 }
 
 type SearchTree = Tree SearchNode
 
---gameNode :: Int -> Int -> Move -> SearchNode
---gameNode = undefined 
+gameNode :: Int -> Int -> Move -> SearchNode
+gameNode = undefined 
 
 mctsSearch :: StdGen -> TreePos Full SearchNode -> (StdGen, TreePos Full SearchNode)
 mctsSearch = (,) . backUp . defaultPolicy . treePolicy
@@ -44,7 +46,7 @@ treePolicy gen searchTree
         bcIndex           = bestChildIndex $ tree searchTree
         bChild            = case childAt bcIndex searchTree of
                                 (Just child) -> child
-        (newNode, newGen) = chooseAction gen tree'   
+        (newNode, newGen) = chooseAction tree' gen   
 
 isTerminal :: SearchTree -> Bool
 isTerminal = undefined
@@ -67,10 +69,8 @@ bestChildIndex = undefined
 expand :: SearchNode -> SearchTree -> SearchTree
 expand newNode searchTree = undefined
 
-chooseAction :: StdGen -> SearchTree -> (SearchNode, StdGen)
-chooseAction gen searchTree = undefined
-
---genChoice :: StdGen -> (Int, StdGen)  
+chooseAction :: SearchTree -> StdGen -> (SearchNode, StdGen)
+chooseAction searchTree gen = undefined
 
 
 ------------------Methods implementing defaultPolicy------------------
