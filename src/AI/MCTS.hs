@@ -99,7 +99,7 @@ chooseAction searchTree gen = (actions !! choice, newGen)
 
 -- | Returns a list of all the chosen actions from a root node 
 getChildrenActions :: SearchTree -> [Action]
-getChildrenActions = foldr (\c cs -> action c : cs) [] . map rootLabel . subForest
+getChildrenActions = map (action . rootLabel) . subForest
 
 -- | Returns a list of all of the possible actions that can be chosen
 possibleActions :: SearchTree -> [Action]
