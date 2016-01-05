@@ -8,20 +8,27 @@ import Data.Tree.Zipper
 import Data.List
 import System.Random
 
+type Action = Column
+
 data SearchNode = TerminalNode 
                 { state :: GameState
                 }
                 | SearchNode 
                 { value      :: Int
                 , visitCount :: Int
-                , action     :: Move
+                , action     :: Action
                 , state      :: GameState
                 }
 
+
+
 type SearchTree = Tree SearchNode
 
-gameNode :: Int -> Int -> Move -> SearchNode
+gameNode :: Int -> Int -> Action -> GameState -> SearchNode
 gameNode = undefined 
+
+newGameNode :: Action -> GameState -> SearchNode
+newGameNode action oldState = gameNode 0 0 action oldState
 
 mctsSearch :: StdGen -> TreePos Full SearchNode -> (StdGen, TreePos Full SearchNode)
 mctsSearch = (,) . backUp . defaultPolicy . treePolicy
@@ -41,12 +48,18 @@ treePolicy gen searchTree
 
   -- otherwise, expand the current node and stop search
   | otherwise             = (newGen, modifyTree (expand newNode) searchTree)
-  
-  where tree'             = tree searchTree
-        bcIndex           = bestChildIndex $ tree searchTree
-        bChild            = case childAt bcIndex searchTree of
-                                (Just child) -> child
-        (newNode, newGen) = chooseAction tree' gen   
+
+  where tree'            = tree searchTree
+        
+        -- Gets the index for the best child of the current node
+        bcIndex          = bestChildIndex $ tree searchTree
+        
+        -- Gets the best child of the current node
+        bChild           = case childAt bcIndex searchTree of
+                               (Just child) -> child
+
+        (action, newGen) = chooseAction tree' gen
+        newNode          = newGameNode action (state . rootLabel $ tree')    
 
 isTerminal :: SearchTree -> Bool
 isTerminal = undefined
@@ -69,7 +82,7 @@ bestChildIndex = undefined
 expand :: SearchNode -> SearchTree -> SearchTree
 expand newNode searchTree = undefined
 
-chooseAction :: SearchTree -> StdGen -> (SearchNode, StdGen)
+chooseAction :: SearchTree -> StdGen -> (Action, StdGen)
 chooseAction searchTree gen = undefined
 
 
