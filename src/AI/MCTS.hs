@@ -94,7 +94,7 @@ chooseAction :: SearchTree -> StdGen -> (Action, StdGen)
 chooseAction searchTree gen = (actions !! choice, newGen)
     where chosen           = getChildrenActions searchTree
           possible         = possibleActions searchTree
-          actions          = [a | a<-possible, not $ a `elem` chosen]
+          actions          = [a | a<-possible, a `notElem` chosen]
           (choice, newGen) = randomR (0, length actions - 1) gen 
 
 -- | Returns a list of all the chosen actions from a root node 
