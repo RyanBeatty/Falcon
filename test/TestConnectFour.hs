@@ -3,8 +3,8 @@ module TestConnectFour (
         , module TestConnectFour.TestPiece
         , module TestConnectFour.TestUtils
     ) where
-import TestConnectFour.TestBoard 
-import TestConnectFour.TestPiece 
-import TestConnectFour.TestUtils 
+import TestConnectFour.TestBoard (boardTests)
+import TestConnectFour.TestPiece (pieceTests)
+import TestConnectFour.TestUtils (utilsTests)
 
 

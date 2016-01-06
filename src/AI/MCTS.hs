@@ -1,4 +1,4 @@
-module MCTS where
+module AI.MCTS where
 
 import ConnectFour.GameState (GameState, validColumns, activePlayer)
 import ConnectFour.Move (Move, Column, move)

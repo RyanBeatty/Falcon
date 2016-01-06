@@ -45,3 +45,6 @@ test-suite test
     , tasty-quickcheck >= 0.8.4
     , tasty-hunit >= 0.9.2
     , QuickCheck >= 2.8.1
+    , random >= 1.0.1.1
+    , rosezipper >= 0.2
+    , containers >= 0.4.2.1
