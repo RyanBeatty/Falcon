@@ -1,8 +1,6 @@
 import Test.Tasty
 
-import TestUtils
-import TestBoard
-import TestPiece
+import TestConnectFour
 
 main = defaultMain tests
 

@@ -1,4 +1,4 @@
-module TestBoard where
+module TestConnectFour.TestBoard where
 
 import Test.Tasty
 import Test.Tasty.QuickCheck as QC

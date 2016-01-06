@@ -1,4 +1,4 @@
-module TestUtils where
+module TestConnectFour.TestUtils where
 
 import Test.Tasty
 import Test.Tasty.QuickCheck as QC
