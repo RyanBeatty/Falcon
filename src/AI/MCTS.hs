@@ -4,7 +4,7 @@ import ConnectFour.GameState (GameState(..), validColumns, activePlayer, updateG
 import ConnectFour.Move (Move, Column, move, columns)
 
 import Data.Tree
-import Data.Tree.Zipper
+import Data.Tree.Zipper as Zipper
 import Data.List
 import System.Random
 
@@ -87,12 +87,12 @@ bestChildIndex = undefined
 -- | uses the rng to choose a new action to take and adds
 -- | the new node to the tree
 expand :: TreePos Full SearchNode -> StdGen -> (TreePos Full SearchNode, StdGen)
-expand searchTree gen = (modifyTree (addChild newNode) searchTree, newGen)
+expand searchTree gen = (Zipper.insert newNode . children $ searchTree, newGen)
     where tree'            = tree searchTree
           curState         = state . rootLabel $ tree'
           (action, newGen) = chooseAction tree' gen
           newState         = applyAction action curState
-          newNode          = newGameNode action newState
+          newNode          = Node (newGameNode action newState) []
 
 -- | Chooses a new action to take using the rng and based off
 -- | of which actions have already been chosen 
