@@ -93,7 +93,7 @@ expand searchTree gen = undefined
 chooseAction :: SearchTree -> StdGen -> (Action, StdGen)
 chooseAction searchTree gen = (actions !! choice, newGen)
     where chosen            = getChildrenActions searchTree
-          possible          = possibleActions searchTree
+          possible          = possibleActions $ rootLabel searchTree
           actions           = [a | a<-possible, a `notElem` chosen]
           (choice, newGen)  = randomR (0, length actions - 1) gen 
 
@@ -102,9 +102,10 @@ getChildrenActions :: SearchTree -> [Action]
 getChildrenActions = map (action . rootLabel) . subForest
 
 -- | Returns a list of all of the possible actions that can be chosen
-possibleActions :: SearchTree -> [Action]
-possibleActions searchTree = map col2Move $ validColumns gameState
-    where gameState = state . rootLabel $ searchTree
+-- | from a certain SearchNode
+possibleActions :: SearchNode -> [Action]
+possibleActions searchNode = map col2Move $ validColumns gameState
+    where gameState = state searchNode
           curPlayer = activePlayer gameState
           col2Move  = flip move curPlayer 
 
