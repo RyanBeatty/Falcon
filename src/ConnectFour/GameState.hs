@@ -9,7 +9,7 @@ data GameState = GameWon Piece
                | GameState 
                { board :: Board 
                , activePlayer :: Piece
-               } deriving (Show)
+               } deriving (Show, Eq)
 
 gameState :: Board -> Piece -> GameState
 gameState = GameState

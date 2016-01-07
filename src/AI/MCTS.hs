@@ -1,7 +1,7 @@
 module AI.MCTS where
 
-import ConnectFour.GameState (GameState(GameState), validColumns, activePlayer, updateGameState)
-import ConnectFour.Move (Move, Column, move)
+import ConnectFour.GameState (GameState(..), validColumns, activePlayer, updateGameState)
+import ConnectFour.Move (Move, Column, move, columns)
 
 import Data.Tree
 import Data.Tree.Zipper
@@ -18,9 +18,7 @@ data SearchNode = TerminalNode
                 , visitCount :: Int
                 , action     :: Action
                 , state      :: GameState
-                } deriving (Show)
-
-
+                } deriving (Show, Eq)
 
 type SearchTree = Tree SearchNode
 
@@ -61,10 +59,14 @@ treePolicy searchTree gen
                                (Just child) -> child   
 
 isTerminal :: SearchTree -> Bool
-isTerminal = undefined
+isTerminal tree = case rootLabel tree of
+                    (TerminalNode _) -> True
+                    _                -> False
 
+-- | A node is fully expanded if it has the same amount of children
+-- | as there are Column choices.
 isFullyExpanded :: SearchTree -> Bool
-isFullyExpanded = undefined
+isFullyExpanded tree = (length . subForest $ tree) == length columns
 
 -- | Returns the best child node of a root node.
 -- | The best child is the child with the highest win value

@@ -12,6 +12,9 @@ data Column = One
             | Seven
         deriving (Show, Enum, Eq)
 
+columns :: [Column]
+columns = [(One)..(Seven)]
+
 readColumn :: String -> Maybe Column
 readColumn "1" = Just One
 readColumn "2" = Just Two
