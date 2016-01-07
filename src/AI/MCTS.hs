@@ -24,6 +24,9 @@ data SearchNode = TerminalNode
 
 type SearchTree = Tree SearchNode
 
+emptyTree :: SearchNode -> SearchTree
+emptyTree node = Node node []
+
 gameNode :: Int -> Int -> Action -> GameState -> SearchNode
 gameNode value count action curState = case curState of
                                         (GameState _ _) -> SearchNode value count action curState
@@ -140,7 +143,6 @@ simulate node gen
         newNode          = newGameNode action newState
 
 
-emptyTree = undefined
 reward = undefined
 
 
