@@ -82,9 +82,9 @@ instance Arbitrary PlayingState where
     arbitrary = liftM PlayingState $ liftM2 GameState genBoard arbitrary 
         where genBoard = liftM almostFilledBoard arbitrary
 
-instance Arbitrary ExpandingNode where
-    arbitrary = liftM ExpandingNode $ liftM4 SearchNode arbitrary arbitrary arbitrary genGameState
-        where genGameState = liftM playingState arbitrary
+--instance Arbitrary ExpandingNode where
+--    arbitrary = liftM ExpandingNode $ liftM4 SearchNode arbitrary arbitrary arbitrary genGameState
+--        where genGameState = liftM playingState arbitrary
 
 --instance Arbitrary a => Arbitrary (Tree a) where
 --  arbitrary = frequency 

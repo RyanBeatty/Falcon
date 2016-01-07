@@ -11,29 +11,32 @@ import System.Random
 type Action = Move
 
 data Reward = Plus | Minus | Draw
+  deriving (Show)
 
 data SearchNode = TerminalNode 
-                { state  :: GameState
+                { reward :: Reward
                 }
                 | SearchNode 
                 { value      :: Int
                 , visitCount :: Int
+                , reward     :: Reward
                 , action     :: Action
                 , state      :: GameState
-                } deriving (Show, Eq)
+                } deriving (Show)
 
 type SearchTree = Tree SearchNode
 
 emptyTree :: SearchNode -> SearchTree
 emptyTree node = Node node []
 
-gameNode :: Int -> Int -> Action -> GameState -> SearchNode
-gameNode value count action curState = case curState of
-                                        (GameState _ _) -> SearchNode value count action curState
-                                        _             -> TerminalNode curState  
+gameNode :: Int -> Int -> Reward -> Action -> GameState -> SearchNode
+gameNode value count reward action curState = case curState of
+                                                (GameState _ _) -> SearchNode value count reward action curState
+                                                (GameDraw)      -> TerminalNode Draw
+                                                _               -> TerminalNode reward   
 
-newGameNode :: Action -> GameState -> SearchNode
-newGameNode action curState = gameNode 0 0 action curState
+newGameNode :: Reward -> Action -> GameState -> SearchNode
+newGameNode reward action curState = gameNode 0 0 reward action curState
 
 --mctsSearch :: TreePos Full SearchNode -> StdGen -> (TreePos Full SearchNode, StdGen)
 mctsSearch tree = (,) . uncurry3 backUp . uncurry defaultPolicy . treePolicy tree
@@ -94,11 +97,12 @@ bestChildIndex = undefined
 -- | the new node to the tree
 expand :: TreePos Full SearchNode -> StdGen -> (TreePos Full SearchNode, StdGen)
 expand searchTree gen = (Zipper.insert newNode . children $ searchTree, newGen)
-    where tree'            = tree searchTree
-          curState         = state . rootLabel $ tree'
-          (action, newGen) = chooseAction tree' gen
-          newState         = applyAction action curState
-          newNode          = Node (newGameNode action newState) []
+    where tree'               = tree searchTree
+          curState            = state . rootLabel $ tree'
+          newReward           = flipReward . reward . rootLabel $ tree'
+          (newAction, newGen) = chooseAction tree' gen
+          newState            = applyAction newAction curState
+          newNode             = Node (newGameNode newReward newAction newState) []
 
 -- | Chooses a new action to take using the rng and based off
 -- | of which actions have already been chosen 
@@ -126,7 +130,11 @@ possibleActions searchNode = map col2Move $ validColumns gameState
 applyAction :: Action -> GameState -> GameState
 applyAction action oldState = case updateGameState oldState action of
                                 Nothing         -> error "this should not happen"
-                                (Just newState) -> newState 
+                                (Just newState) -> newState
+
+flipReward :: Reward -> Reward
+flipReward Plus  = Minus
+flipReward Minus = Plus 
 
 ------------------Methods implementing defaultPolicy------------------
 
@@ -142,12 +150,13 @@ simulate :: SearchNode -> StdGen -> (Reward, StdGen)
 simulate node gen
   | isTerminal . emptyTree $ node = (reward node, gen)
   | otherwise                     = simulate newNode newGen
-  where (action, newGen) = chooseAction (emptyTree node) gen
-        newState         = applyAction action (state node)
-        newNode          = newGameNode action newState
+  where (newAction, newGen) = chooseAction (emptyTree node) gen
+        newState            = applyAction newAction (state node)
+        newReward           = flipReward . reward $ node
+        newNode             = newGameNode newReward newAction newState
 
 
-reward = undefined
+--reward = undefined
 
 
 
