@@ -10,6 +10,8 @@ import System.Random
 
 type Action = Move
 
+data Reward = Plus | Minus
+
 data SearchNode = TerminalNode 
                 { state :: GameState
                 }
@@ -30,8 +32,8 @@ gameNode value count action curState = case curState of
 newGameNode :: Action -> GameState -> SearchNode
 newGameNode action curState = gameNode 0 0 action curState
 
-mctsSearch :: TreePos Full SearchNode -> StdGen -> (TreePos Full SearchNode, StdGen)
-mctsSearch = (,) . backUp . defaultPolicy . treePolicy
+--mctsSearch :: TreePos Full SearchNode -> StdGen -> (TreePos Full SearchNode, StdGen)
+mctsSearch tree = (,) . backUp . uncurry defaultPolicy . treePolicy tree
 
 ------------------methods implementing treePolicy------------------
 
@@ -124,9 +126,22 @@ applyAction action oldState = case updateGameState oldState action of
 
 ------------------Methods implementing defaultPolicy------------------
 
-defaultPolicy = undefined
+defaultPolicy :: TreePos Full SearchNode -> StdGen -> (Reward, TreePos Full SearchNode, StdGen)
+defaultPolicy searchTree gen = (reward, searchTree, newGen)
+    where rootNode         = rootLabel $ tree searchTree
+          (reward, newGen) = simulate rootNode gen
+
+simulate :: SearchNode -> StdGen -> (Reward, StdGen)
+simulate node gen
+  | isTerminal . emptyTree $ node = (reward node, gen)
+  | otherwise                     = simulate newNode newGen
+  where (action, newGen) = chooseAction (emptyTree node) gen
+        newState         = applyAction action (state node)
+        newNode          = newGameNode action newState
 
 
+emptyTree = undefined
+reward = undefined
 
 
 
