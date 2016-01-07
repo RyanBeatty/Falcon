@@ -10,14 +10,14 @@ import System.Random
 
 type Action = Move
 
-data Reward = Plus | Minus | Draw
-  deriving (Show)
+data Reward = Minus | Draw | Plus
+  deriving (Show, Eq, Ord)
 
-data SearchNode = TerminalNode 
-                { reward :: Reward
+data SearchNode = TerminalNode { 
+                  reward :: Reward
                 }
-                | SearchNode 
-                { value      :: Int
+                | SearchNode { 
+                  value      :: Int
                 , visitCount :: Int
                 , reward     :: Reward
                 , action     :: Action
@@ -30,10 +30,11 @@ emptyTree :: SearchNode -> SearchTree
 emptyTree node = Node node []
 
 gameNode :: Int -> Int -> Reward -> Action -> GameState -> SearchNode
-gameNode value count reward action curState = case curState of
-                                                (GameState _ _) -> SearchNode value count reward action curState
-                                                (GameDraw)      -> TerminalNode Draw
-                                                _               -> TerminalNode reward   
+gameNode value count reward action curState = 
+  case curState of
+    (GameState _ _) -> SearchNode value count reward action curState
+    (GameDraw)      -> TerminalNode Draw
+    _               -> TerminalNode reward   
 
 newGameNode :: Reward -> Action -> GameState -> SearchNode
 newGameNode reward action curState = gameNode 0 0 reward action curState
@@ -156,12 +157,6 @@ simulate node gen
         newNode             = newGameNode newReward newAction newState
 
 
---reward = undefined
-
-
-
-
-
 ------------------Methods implementing backUp------------------
 
 backUp :: Reward -> TreePos Full SearchNode -> StdGen -> (TreePos Full SearchNode, StdGen)
@@ -169,8 +164,6 @@ backUp reward searchTree gen = case parent updatedTree of
                                   Nothing           -> (updatedTree, gen)
                                   (Just parentTree) -> backUp reward parentTree gen
     where updatedTree = modifyTree (updateTree reward) searchTree
-
-
 
 updateTree :: Reward -> SearchTree -> SearchTree
 updateTree reward tree = tree {rootLabel= updateNode reward (rootLabel tree)}
