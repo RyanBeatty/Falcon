@@ -18,14 +18,14 @@ data SearchNode = TerminalNode
                 , visitCount :: Int
                 , action     :: Action
                 , state      :: GameState
-                }
+                } deriving (Show)
 
 
 
 type SearchTree = Tree SearchNode
 
 gameNode :: Int -> Int -> Action -> GameState -> SearchNode
-gameNode = undefined 
+gameNode = gameNode  
 
 newGameNode :: Action -> GameState -> SearchNode
 newGameNode action oldState = gameNode 0 0 action oldState

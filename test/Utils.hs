@@ -6,6 +6,7 @@ import Data.List
 
 import ConnectFour.Piece
 import ConnectFour.Square
+import ConnectFour.Move
 import ConnectFour.Board
 import ConnectFour.GameState
 import AI.MCTS
@@ -31,6 +32,10 @@ newtype PlayingState = PlayingState {
         playingState :: GameState
     } deriving(Show)
 
+newtype ExpandingNode = ExpandingNode {
+        expandingNode :: SearchNode
+    } deriving(Show)
+
 -- | Arbitrary instance for Pieces. Either a RedPiece or BlackPiece is generated
 instance Arbitrary Piece where
     arbitrary = oneof [return redPiece, return blackPiece]
@@ -38,6 +43,11 @@ instance Arbitrary Piece where
 -- | Arbitrary generator for Squares. Either emptysquares, redsquares, or blacksquares are returned
 instance Arbitrary Square where
     arbitrary = oneof [return emptySquare, return redSquare, return blackSquare]
+
+-- | Arbitrary generator for Move. Generates a move with a random column and piece
+instance Arbitrary Move where
+    arbitrary = liftM2 move columns arbitrary
+        where columns = oneof $ map (return) [(One)..(Seven)]
 
 -- | Arbitrary generator for FilledBoard. generates a random, non-empty board
 instance Arbitrary FilledBoard where
@@ -65,6 +75,10 @@ instance Arbitrary RowWonBoard where
 instance Arbitrary PlayingState where
     arbitrary = liftM PlayingState $ liftM2 GameState genBoard arbitrary 
         where genBoard = liftM almostFilledBoard arbitrary
+
+instance Arbitrary ExpandingNode where
+    arbitrary = liftM ExpandingNode $ liftM4 SearchNode arbitrary arbitrary arbitrary genGameState
+        where genGameState = liftM playingState arbitrary
 
 -- | Generates a filled square
 genFilledSquare :: Gen Square
