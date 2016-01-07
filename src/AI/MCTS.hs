@@ -43,7 +43,7 @@ treePolicy searchTree gen
   -- If a node is a TerminalNode, then stop search
   | isTerminal tree'      = (searchTree, gen)
 
-  -- If a Node is FullyExpanded, then continue search with its best child
+  -- If a Node is FullyExpanded, then search its best child
   | isFullyExpanded tree' = treePolicy bChild gen
 
   -- otherwise, expand the current node and stop search
@@ -102,13 +102,6 @@ chooseAction searchTree gen = (actions !! choice, newGen)
           possible          = possibleActions $ rootLabel searchTree
           actions           = filter (`notElem` chosen) possible
           (choice, newGen)  = randomR (0, length actions - 1) gen 
-
--- | Adds a new child node to a tree as a child of the root node
-addChild :: SearchNode -> SearchTree -> SearchTree
-addChild child tree = tree {subForest = child' : children}
-    where child' = Node child []
-          children = subForest tree
-
 
 -- | Returns a list of all the chosen actions from a root node 
 getChildrenActions :: SearchTree -> [Action]
