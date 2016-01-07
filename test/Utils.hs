@@ -7,6 +7,8 @@ import Data.List
 import ConnectFour.Piece
 import ConnectFour.Square
 import ConnectFour.Board
+import ConnectFour.GameState
+import AI.MCTS
 
 -- | Represents a board that has no empty spaces
 newtype FilledBoard = FilledBoard {
@@ -23,6 +25,10 @@ newtype ColumnWonBoard = ColumnWonBoard {
 
 newtype RowWonBoard = RowWonBoard {
         rowWonBoard :: Board    
+    } deriving(Show)
+
+newtype PlayingState = PlayingState {
+        playingState :: GameState
     } deriving(Show)
 
 -- | Arbitrary instance for Pieces. Either a RedPiece or BlackPiece is generated
@@ -54,6 +60,12 @@ instance Arbitrary RowWonBoard where
     arbitrary = liftM RowWonBoard (generator >>= shuffle >>= return . transpose) 
         where generator = liftM2 (:) (genWonColumn numCols) (vectorOf (numRows-1) $ genEmptyList numCols) 
 
+-- | Arbitrary generator for a PlayingState. Generates a GameState with
+-- | an almost filled board and a random player
+instance Arbitrary PlayingState where
+    arbitrary = liftM PlayingState $ liftM2 GameState genBoard arbitrary 
+        where genBoard = liftM almostFilledBoard arbitrary
+
 -- | Generates a filled square
 genFilledSquare :: Gen Square
 genFilledSquare = oneof [return redSquare, return blackSquare]
@@ -84,7 +96,6 @@ genWonColumn len = do square <- genFilledSquare                          -- choo
                       xs <- vectorOf (len-4) genEmptySquare   -- generate random column
                       let (as, bs) = splitAt n xs                        -- split the column at the index
                       return (as ++ (replicate 4 square) ++ bs)          -- insert winning sequence
-
 
 
 
