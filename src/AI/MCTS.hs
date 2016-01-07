@@ -36,7 +36,8 @@ newGameNode :: Action -> GameState -> SearchNode
 newGameNode action curState = gameNode 0 0 action curState
 
 --mctsSearch :: TreePos Full SearchNode -> StdGen -> (TreePos Full SearchNode, StdGen)
-mctsSearch tree = (,) . backUp . uncurry defaultPolicy . treePolicy tree
+mctsSearch tree = (,) . uncurry3 backUp . uncurry defaultPolicy . treePolicy tree
+  where uncurry3 f (a,b,c) = uncurry (f a) (b,c) 
 
 ------------------methods implementing treePolicy------------------
 
@@ -129,11 +130,14 @@ applyAction action oldState = case updateGameState oldState action of
 
 ------------------Methods implementing defaultPolicy------------------
 
+-- | Simulates the completion of a game from the current position
+-- | and returns the reward for the current position
 defaultPolicy :: TreePos Full SearchNode -> StdGen -> (Reward, TreePos Full SearchNode, StdGen)
 defaultPolicy searchTree gen = (reward, searchTree, newGen)
     where rootNode         = rootLabel $ tree searchTree
           (reward, newGen) = simulate rootNode gen
 
+-- | Plays a game to completion, returning the completion reward
 simulate :: SearchNode -> StdGen -> (Reward, StdGen)
 simulate node gen
   | isTerminal . emptyTree $ node = (reward node, gen)
@@ -151,8 +155,23 @@ reward = undefined
 
 ------------------Methods implementing backUp------------------
 
-backUp = undefined
+backUp :: Reward -> TreePos Full SearchNode -> StdGen -> (TreePos Full SearchNode, StdGen)
+backUp reward searchTree gen = case parent updatedTree of
+                                  Nothing           -> (updatedTree, gen)
+                                  (Just parentTree) -> backUp reward parentTree gen
+    where updatedTree = modifyTree (updateTree reward) searchTree
 
+
+
+updateTree :: Reward -> SearchTree -> SearchTree
+updateTree reward tree = tree {rootLabel= updateNode reward (rootLabel tree)}
+
+updateNode :: Reward -> SearchNode -> SearchNode
+updateNode reward node = node {value = newValue, visitCount = newCount}
+    where newCount = visitCount node + 1
+          newValue = case reward of
+                        Plus  -> value node + 1
+                        Minus -> value node - 1 
 
 
 
