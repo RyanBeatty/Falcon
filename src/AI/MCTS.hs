@@ -10,10 +10,10 @@ import System.Random
 
 type Action = Move
 
-data Reward = Plus | Minus
+data Reward = Plus | Minus | Draw
 
 data SearchNode = TerminalNode 
-                { state :: GameState
+                { state  :: GameState
                 }
                 | SearchNode 
                 { value      :: Int
@@ -171,7 +171,8 @@ updateNode reward node = node {value = newValue, visitCount = newCount}
     where newCount = visitCount node + 1
           newValue = case reward of
                         Plus  -> value node + 1
-                        Minus -> value node - 1 
+                        Minus -> value node - 1
+                        Draw  -> value node 
 
 
 
