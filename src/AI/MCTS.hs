@@ -1,6 +1,6 @@
 module AI.MCTS where
 
-import ConnectFour.GameState (GameState, validColumns, activePlayer)
+import ConnectFour.GameState (GameState(GameState), validColumns, activePlayer, updateGameState)
 import ConnectFour.Move (Move, Column, move)
 
 import Data.Tree
@@ -25,10 +25,12 @@ data SearchNode = TerminalNode
 type SearchTree = Tree SearchNode
 
 gameNode :: Int -> Int -> Action -> GameState -> SearchNode
-gameNode = gameNode  
+gameNode value count action curState = case curState of
+                                        (GameState _ _) -> SearchNode value count action curState
+                                        _             -> TerminalNode curState  
 
 newGameNode :: Action -> GameState -> SearchNode
-newGameNode action oldState = gameNode 0 0 action oldState
+newGameNode action curState = gameNode 0 0 action curState
 
 mctsSearch :: StdGen -> TreePos Full SearchNode -> (StdGen, TreePos Full SearchNode)
 mctsSearch = (,) . backUp . defaultPolicy . treePolicy
@@ -83,10 +85,12 @@ bestChildIndex = undefined
 -- | uses the rng to choose a new action to take and adds
 -- | the new node to the tree
 expand :: TreePos Full SearchNode -> StdGen -> (TreePos Full SearchNode, StdGen)
-expand searchTree gen = undefined
+expand searchTree gen = (modifyTree (addChild newNode) searchTree, newGen)
     where tree'            = tree searchTree
+          curState         = state . rootLabel $ tree'
           (action, newGen) = chooseAction tree' gen
-          newNode          = newGameNode action (state . rootLabel $ tree') 
+          newState         = applyAction action curState
+          newNode          = newGameNode action newState
 
 -- | Chooses a new action to take using the rng and based off
 -- | of which actions have already been chosen 
@@ -94,8 +98,15 @@ chooseAction :: SearchTree -> StdGen -> (Action, StdGen)
 chooseAction searchTree gen = (actions !! choice, newGen)
     where chosen            = getChildrenActions searchTree
           possible          = possibleActions $ rootLabel searchTree
-          actions           = [a | a<-possible, a `notElem` chosen]
+          actions           = filter (`notElem` chosen) possible
           (choice, newGen)  = randomR (0, length actions - 1) gen 
+
+-- | Adds a new child node to a tree as a child of the root node
+addChild :: SearchNode -> SearchTree -> SearchTree
+addChild child tree = tree {subForest = child' : children}
+    where child' = Node child []
+          children = subForest tree
+
 
 -- | Returns a list of all the chosen actions from a root node 
 getChildrenActions :: SearchTree -> [Action]
@@ -107,7 +118,14 @@ possibleActions :: SearchNode -> [Action]
 possibleActions searchNode = map col2Move $ validColumns gameState
     where gameState = state searchNode
           curPlayer = activePlayer gameState
-          col2Move  = flip move curPlayer 
+          col2Move  = flip move curPlayer
+
+-- | Updates the current game state with the chosen action
+-- | NOTE: Only use with a valid action
+applyAction :: Action -> GameState -> GameState
+applyAction action oldState = case updateGameState oldState action of
+                                Nothing         -> error "this should not happen"
+                                (Just newState) -> newState 
 
 ------------------Methods implementing defaultPolicy------------------
 

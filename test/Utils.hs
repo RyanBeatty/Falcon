@@ -2,7 +2,9 @@ module Utils where
 
 import Test.Tasty.QuickCheck as QC
 import Control.Monad
+import Control.Applicative
 import Data.List
+import Data.Tree
 
 import ConnectFour.Piece
 import ConnectFour.Square
@@ -35,6 +37,10 @@ newtype PlayingState = PlayingState {
 newtype ExpandingNode = ExpandingNode {
         expandingNode :: SearchNode
     } deriving(Show)
+
+newtype ExpandingTree = ExpandingTree {
+        expandingTree :: SearchTree
+    }
 
 -- | Arbitrary instance for Pieces. Either a RedPiece or BlackPiece is generated
 instance Arbitrary Piece where
@@ -79,6 +85,15 @@ instance Arbitrary PlayingState where
 instance Arbitrary ExpandingNode where
     arbitrary = liftM ExpandingNode $ liftM4 SearchNode arbitrary arbitrary arbitrary genGameState
         where genGameState = liftM playingState arbitrary
+
+--instance Arbitrary a => Arbitrary (Tree a) where
+--  arbitrary = frequency 
+--    [ (3, Node <$> arbitrary <*> return [])                   -- The 3-to-1 ratio is chosen, ah,
+--                                              -- arbitrarily...
+--                                              -- you'll want to tune it
+--    , (1, Node <$> arbitrary <*> children)
+--    ]
+--    where children = vectorOf 4 arbitrary
 
 -- | Generates a filled square
 genFilledSquare :: Gen Square

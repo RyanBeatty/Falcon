@@ -1,6 +1,7 @@
 
 
 import ConnectFour
+import AI.MCTS
 
 import Data.Maybe
 import System.IO
