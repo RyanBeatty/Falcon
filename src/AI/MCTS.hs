@@ -14,36 +14,34 @@ type Action = Move
 data Reward = Minus | Draw | Plus
   deriving (Show, Eq, Ord)
 
-data SearchNode = TerminalNode { 
-                  reward :: Reward
-                }
-                | SearchNode { 
+data SearchNode = SearchNode { 
                   value      :: Int
                 , visitCount :: Int
                 , reward     :: Reward
                 , action     :: Action
                 , state      :: GameState
+                , terminal   :: Bool
                 } deriving (Show)
 
 type SearchTree = Tree SearchNode
 
-instance Eq SearchNode where
-  (TerminalNode r1) == (TerminalNode r2) = r1 == r2
-  (TerminalNode _) == _                  = False
-  _ == (TerminalNode _)                  = False
-  (SearchNode a1 b1 c1 d1 e1) == (SearchNode a2 b2 c2 d2 e2) = (a1==a2) && 
-                                                               (b1==b2) && 
-                                                               (c1==c2) && 
-                                                               (d1==d2) && 
-                                                               (e1==e2)
+--instance Eq SearchNode where
+--  (TerminalNode r1) == (TerminalNode r2) = r1 == r2
+--  (TerminalNode _) == _                  = False
+--  _ == (TerminalNode _)                  = False
+--  (SearchNode a1 b1 c1 d1 e1) == (SearchNode a2 b2 c2 d2 e2) = (a1==a2) && 
+--                                                               (b1==b2) && 
+--                                                               (c1==c2) && 
+--                                                               (d1==d2) && 
+--                                                               (e1==e2)
 
-instance Ord SearchNode where
-  compare (TerminalNode r1) (TerminalNode r2) = compare r1 r2
-  compare (TerminalNode Plus) _               = GT
-  compare _ (TerminalNode Plus)               = LT
-  compare (TerminalNode _) _                  = LT
-  compare _                (TerminalNode _)   = LT
-  compare (SearchNode v1 _ _ _ _) (SearchNode v2 _ _ _ _) = compare v1 v2
+--instance Ord SearchNode where
+--  compare (TerminalNode r1) (TerminalNode r2) = compare r1 r2
+--  compare (TerminalNode Plus) _               = GT
+--  compare _ (TerminalNode Plus)               = LT
+--  compare (TerminalNode _) _                  = LT
+--  compare _                (TerminalNode _)   = LT
+--  compare (SearchNode v1 _ _ _ _) (SearchNode v2 _ _ _ _) = compare v1 v2
 
 emptyTree :: SearchNode -> SearchTree
 emptyTree node = Node node []
@@ -51,9 +49,9 @@ emptyTree node = Node node []
 searchNode :: Int -> Int -> Reward -> Action -> GameState -> SearchNode
 searchNode value count reward action curState = 
   case curState of
-    (GameState _ _) -> SearchNode value count reward action curState
-    (GameDraw)      -> TerminalNode Draw
-    _               -> TerminalNode reward   
+    (GameState _ _) -> SearchNode value count reward action curState False
+    (GameDraw)      -> SearchNode value count Draw   action curState True
+    _               -> SearchNode value count reward action curState True   
 
 newSearchNode :: Reward -> Action -> GameState -> SearchNode
 newSearchNode reward action curState = searchNode 0 0 reward action curState
@@ -91,9 +89,10 @@ treePolicy searchTree gen
                                (Just child) -> child   
 
 isTerminal :: SearchTree -> Bool
-isTerminal tree = case rootLabel tree of
-                    (TerminalNode _) -> True
-                    _                -> False
+isTerminal = terminal . rootLabel
+--isTerminal tree = case rootLabel tree of
+--                    (TerminalNode _) -> True
+--                    _                -> False
 
 -- | A node is fully expanded if it has the same amount of children
 -- | as there are Column choices.
@@ -103,21 +102,25 @@ isFullyExpanded tree = (length . subForest $ tree) == length columns
 -- | Returns the best child node of a root node.
 -- | The best child is the child with the highest win value
 bestChild :: SearchTree -> SearchNode
-bestChild = maximum . map rootLabel . subForest
+bestChild = undefined
+--bestChild = maximum . map rootLabel . subForest
 
 -- | Returns the index of the best child node
 bestChildIndex :: SearchTree -> Int
-bestChildIndex tree = case elemIndex bChild children of
-                        Nothing      -> error "should not happen"
-                        (Just index) -> index
-  where bChild   = bestChild tree
-        children = map rootLabel . subForest $ tree
+bestChildIndex = undefined
+--bestChildIndex tree = case elemIndex bChild children of
+--                        Nothing      -> error "should not happen"
+--                        (Just index) -> index
+--  where bChild   = bestChild tree
+--        children = map rootLabel . subForest $ tree
 
-childValue :: Int -> SearchNode -> Double
-childValue nParent node = (q/n) + cp * (sqrt $ (2 * log (fromIntegral nParent)) / n)
-  where cp    = 1 / (sqrt $ fromIntegral 2)
-        q     = fromIntegral (value node) :: Double
-        n     = fromIntegral (visitCount node) :: Double
+explorationWeight :: Double
+explorationWeight = 1 / (sqrt $ fromIntegral 2)
+
+childValue :: Double -> Int -> SearchNode -> Double
+childValue weight nParent node = (q/n) + weight * (sqrt $ (2 * log (fromIntegral nParent)) / n)
+  where q = fromIntegral (value node) :: Double
+        n = fromIntegral (visitCount node) :: Double
 
 ------------------Methods implementing expand------------------
 
