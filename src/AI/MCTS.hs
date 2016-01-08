@@ -1,7 +1,8 @@
 module AI.MCTS where
 
 import ConnectFour.GameState (GameState(..), validColumns, activePlayer, updateGameState)
-import ConnectFour.Move (Move, Column, move, columns)
+import ConnectFour.Move (Move(..), Column(..), move, columns)
+import ConnectFour.Piece (Piece(..))
 
 import Data.Tree
 import Data.Tree.Zipper as Zipper
@@ -56,6 +57,9 @@ searchNode value count reward action curState =
 
 newSearchNode :: Reward -> Action -> GameState -> SearchNode
 newSearchNode reward action curState = searchNode 0 0 reward action curState
+
+rootSearchNode :: GameState -> SearchNode
+rootSearchNode = newSearchNode Minus (Move One RedPiece) 
 
 mctsSearch :: TreePos Full SearchNode -> StdGen -> (TreePos Full SearchNode, StdGen)
 mctsSearch tree = uncurry3 backUp . uncurry defaultPolicy . treePolicy tree
