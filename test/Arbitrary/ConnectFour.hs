@@ -1,10 +1,9 @@
-module Utils where
+module Arbitrary.ConnectFour where
 
 import Test.Tasty.QuickCheck as QC
 import Control.Monad
 import Control.Applicative
 import Data.List
-import Data.Tree
 
 import ConnectFour.Piece
 import ConnectFour.Square
@@ -29,18 +28,6 @@ newtype ColumnWonBoard = ColumnWonBoard {
 newtype RowWonBoard = RowWonBoard {
         rowWonBoard :: Board    
     } deriving(Show)
-
-newtype PlayingState = PlayingState {
-        playingState :: GameState
-    } deriving(Show)
-
-newtype ExpandingNode = ExpandingNode {
-        expandingNode :: SearchNode
-    } deriving(Show)
-
-newtype ExpandingTree = ExpandingTree {
-        expandingTree :: SearchTree
-    }
 
 -- | Arbitrary instance for Pieces. Either a RedPiece or BlackPiece is generated
 instance Arbitrary Piece where
@@ -75,25 +62,6 @@ instance Arbitrary ColumnWonBoard where
 instance Arbitrary RowWonBoard where
     arbitrary = liftM RowWonBoard (generator >>= shuffle >>= return . transpose) 
         where generator = liftM2 (:) (genWonColumn numCols) (vectorOf (numRows-1) $ genEmptyList numCols) 
-
--- | Arbitrary generator for a PlayingState. Generates a GameState with
--- | an almost filled board and a random player
-instance Arbitrary PlayingState where
-    arbitrary = liftM PlayingState $ liftM2 GameState genBoard arbitrary 
-        where genBoard = liftM almostFilledBoard arbitrary
-
---instance Arbitrary ExpandingNode where
---    arbitrary = liftM ExpandingNode $ liftM4 SearchNode arbitrary arbitrary arbitrary genGameState
---        where genGameState = liftM playingState arbitrary
-
---instance Arbitrary a => Arbitrary (Tree a) where
---  arbitrary = frequency 
---    [ (3, Node <$> arbitrary <*> return [])                   -- The 3-to-1 ratio is chosen, ah,
---                                              -- arbitrarily...
---                                              -- you'll want to tune it
---    , (1, Node <$> arbitrary <*> children)
---    ]
---    where children = vectorOf 4 arbitrary
 
 -- | Generates a filled square
 genFilledSquare :: Gen Square

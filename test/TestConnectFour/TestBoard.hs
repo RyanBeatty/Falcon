@@ -9,7 +9,7 @@ import ConnectFour.Board
 import ConnectFour.Square
 import ConnectFour.Move
 
-import Utils
+import Arbitrary.ConnectFour
 
 
 -- | Entire test suite

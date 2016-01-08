@@ -4,13 +4,7 @@ import Test.Tasty
 import Test.Tasty.HUnit
 import Test.Tasty.QuickCheck as QC
 
-import Data.Tree
-import System.Random
 
-import Utils
-import AI.MCTS
-import ConnectFour.GameState
-import ConnectFour.Move
 
 -- | Entire test suite
 mctsTests :: TestTree
