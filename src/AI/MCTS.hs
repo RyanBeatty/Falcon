@@ -10,6 +10,7 @@ import Data.List
 import System.Random
 
 type Action = Move
+type Budget = Int
 
 data Reward = Minus | Draw | Plus
   deriving (Show, Eq, Ord)
@@ -25,8 +26,7 @@ data SearchNode = SearchNode {
 
 type SearchTree = Tree SearchNode
 
-emptyTree :: SearchNode -> SearchTree
-emptyTree node = Node node []
+------------------Constructor methods------------------
 
 searchNode :: Int -> Int -> Reward -> Action -> GameState -> SearchNode
 searchNode value count reward action curState = 
@@ -41,8 +41,21 @@ newSearchNode = searchNode 0 0
 rootSearchNode :: GameState -> SearchNode
 rootSearchNode = newSearchNode Minus (Move One RedPiece) 
 
-mctsSearch :: TreePos Full SearchNode -> StdGen -> (TreePos Full SearchNode, StdGen)
-mctsSearch tree = uncurry3 backUp . uncurry defaultPolicy . treePolicy tree
+
+emptyTree :: SearchNode -> SearchTree
+emptyTree node = Node node []
+
+------------------Methods implementing Monte-Carlo Tree Search Algorithm------------------
+
+
+mcts :: Budget -> GameState -> StdGen -> Action
+mcts budget gstate gen = action . bestChild . (\(stree, _) -> tree stree) $ search budget (fromTree . emptyTree $ rootSearchNode gstate) gen
+
+
+search :: Budget -> TreePos Full SearchNode -> StdGen -> (TreePos Full SearchNode, StdGen)
+search budget tree gen
+  | budget > 0 = uncurry (search (budget-1)) . uncurry3 backUp . uncurry defaultPolicy $ treePolicy tree gen
+  | otherwise  = (tree, gen)
   where uncurry3 f (a,b,c) = uncurry (f a) (b,c) 
 
 ------------------methods implementing treePolicy------------------
@@ -86,6 +99,9 @@ childValue :: Double -> Int -> SearchNode -> Double
 childValue weight nParent node = (q/n) + weight * (sqrt $ (2 * log (fromIntegral nParent)) / n)
   where q = fromIntegral (value node) :: Double
         n = fromIntegral (visitCount node) :: Double
+
+bestChild :: SearchTree -> SearchNode
+bestChild tree = (map rootLabel . subForest $ tree) !! bestChildIndex tree
 
 bestChildIndex :: SearchTree -> Int
 bestChildIndex tree = case elemIndex (maximum children) children of
