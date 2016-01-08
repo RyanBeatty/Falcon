@@ -47,15 +47,15 @@ instance Ord SearchNode where
 emptyTree :: SearchNode -> SearchTree
 emptyTree node = Node node []
 
-gameNode :: Int -> Int -> Reward -> Action -> GameState -> SearchNode
-gameNode value count reward action curState = 
+searchNode :: Int -> Int -> Reward -> Action -> GameState -> SearchNode
+searchNode value count reward action curState = 
   case curState of
     (GameState _ _) -> SearchNode value count reward action curState
     (GameDraw)      -> TerminalNode Draw
     _               -> TerminalNode reward   
 
-newGameNode :: Reward -> Action -> GameState -> SearchNode
-newGameNode reward action curState = gameNode 0 0 reward action curState
+newSearchNode :: Reward -> Action -> GameState -> SearchNode
+newSearchNode reward action curState = searchNode 0 0 reward action curState
 
 mctsSearch :: TreePos Full SearchNode -> StdGen -> (TreePos Full SearchNode, StdGen)
 mctsSearch tree = uncurry3 backUp . uncurry defaultPolicy . treePolicy tree
@@ -123,7 +123,7 @@ expand searchTree gen = (Zipper.insert newNode . children $ searchTree, newGen)
           newReward           = flipReward . reward . rootLabel $ tree'
           (newAction, newGen) = chooseAction tree' gen
           newState            = applyAction newAction curState
-          newNode             = Node (newGameNode newReward newAction newState) []
+          newNode             = Node (newSearchNode newReward newAction newState) []
 
 -- | Chooses a new action to take using the rng and based off
 -- | of which actions have already been chosen 
@@ -174,7 +174,7 @@ simulate node gen
   where (newAction, newGen) = chooseAction (emptyTree node) gen
         newState            = applyAction newAction (state node)
         newReward           = flipReward . reward $ node
-        newNode             = newGameNode newReward newAction newState
+        newNode             = newSearchNode newReward newAction newState
 
 
 ------------------Methods implementing backUp------------------
