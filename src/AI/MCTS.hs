@@ -36,7 +36,13 @@ instance Eq SearchNode where
                                                                (d1==d2) && 
                                                                (e1==e2)
 
---instance 
+instance Ord SearchNode where
+  compare (TerminalNode r1) (TerminalNode r2) = compare r1 r2
+  compare (TerminalNode Plus) _               = GT
+  compare _ (TerminalNode Plus)               = LT
+  compare (TerminalNode _) _                  = LT
+  compare _                (TerminalNode _)   = LT
+  compare (SearchNode v1 _ _ _ _) (SearchNode v2 _ _ _ _) = compare v1 v2
 
 
 emptyTree :: SearchNode -> SearchTree
