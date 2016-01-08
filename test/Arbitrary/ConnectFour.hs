@@ -11,16 +11,25 @@ import ConnectFour.Square
 import ConnectFour.Move
 import ConnectFour.Board
 import ConnectFour.GameState
-import AI.MCTS
 
 -- | Picks a random Piece type
 instance Arbitrary Piece where
     arbitrary = elements [redPiece, blackPiece]
 
+-- | Picks a random column
+instance Arbitrary Column where
+    arbitrary = elements columns
+
+-- | Picks a move with a random column and piece type
+instance Arbitrary Move where
+    arbitrary = move <$> arbitrary <*> arbitrary
+
 -- | Picks a random Square
 instance Arbitrary Square where
     arbitrary = elements [emptySquare, redSquare, blackSquare]
 
+-- | Generates a row of either empty squares or
+-- | a mix of empty and filled squares
 instance Arbitrary [Square] where
     arbitrary = frequency [(1, emptyRow), (7, randomRow)]
         where emptyRow = return $ replicate numRows emptySquare
@@ -30,14 +39,13 @@ instance Arbitrary [Square] where
                     empty  = pure (replicate (numRows-n) emptySquare) :: Gen [Square]
                 (++) <$> empty <*> filled
 
+instance Arbitrary Board where
+    arbitrary = vectorOf numCols arbitrary `suchThat` validBoard
+        where validBoard board = abs (numReds - numBlacks) <= 1
+                where countColor color = foldr (\row acc -> acc + foldr (\s a -> if s == color then a+1 else a) 0 row) 0 board
+                      numReds          = countColor redSquare
+                      numBlacks        = countColor blackSquare 
 
--- | Picks a random column
-instance Arbitrary Column where
-    arbitrary = elements columns
-
--- | Picks a move with a random column and piece type
-instance Arbitrary Move where
-    arbitrary = move <$> arbitrary <*> arbitrary
 
 
 -----------------Need to refactor below-----------------
