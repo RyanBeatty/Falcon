@@ -45,10 +45,9 @@ instance Arbitrary [Square] where
 instance Arbitrary Board where
     arbitrary = vectorOf numCols arbitrary `suchThat` validBoard
         where validBoard board = abs (numReds - numBlacks) <= 1
-                where countColor color = foldr (\row acc -> acc + foldr (\s a -> if s == color then a+1 else a) 0 row) 0 board
+                where countColor color = foldr (\row acc -> (+) acc . length $ filter (== color) row) 0 board
                       numReds          = countColor redSquare
                       numBlacks        = countColor blackSquare 
-
 
 
 -----------------Need to refactor below-----------------
