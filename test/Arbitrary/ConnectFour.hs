@@ -39,7 +39,7 @@ instance Arbitrary [Square] where
                     empty  = pure (replicate (numRows-n) emptySquare) :: Gen [Square]
                 (++) <$> empty <*> filled
 
--- | Generates a random valid random Board by
+-- | Generates a valid random Board by
 -- | making sure that the difference between the number
 -- | of red and black squares is less than or equal to 1
 instance Arbitrary Board where
@@ -48,6 +48,8 @@ instance Arbitrary Board where
                 where numReds   = countColor redSquare board 
                       numBlacks = countColor blackSquare board
 
+-- | Generates a random valid GameState. A playable
+-- | GameState has a random board and correct activePlayer
 instance Arbitrary GameState where
     arbitrary = oneof [
           return gameDraw
