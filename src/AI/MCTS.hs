@@ -44,7 +44,6 @@ instance Ord SearchNode where
   compare _                (TerminalNode _)   = LT
   compare (SearchNode v1 _ _ _ _) (SearchNode v2 _ _ _ _) = compare v1 v2
 
-
 emptyTree :: SearchNode -> SearchTree
 emptyTree node = Node node []
 
@@ -58,8 +57,8 @@ gameNode value count reward action curState =
 newGameNode :: Reward -> Action -> GameState -> SearchNode
 newGameNode reward action curState = gameNode 0 0 reward action curState
 
---mctsSearch :: TreePos Full SearchNode -> StdGen -> (TreePos Full SearchNode, StdGen)
-mctsSearch tree = (,) . uncurry3 backUp . uncurry defaultPolicy . treePolicy tree
+mctsSearch :: TreePos Full SearchNode -> StdGen -> (TreePos Full SearchNode, StdGen)
+mctsSearch tree = uncurry3 backUp . uncurry defaultPolicy . treePolicy tree
   where uncurry3 f (a,b,c) = uncurry (f a) (b,c) 
 
 ------------------methods implementing treePolicy------------------
@@ -99,14 +98,16 @@ isFullyExpanded tree = (length . subForest $ tree) == length columns
 
 -- | Returns the best child node of a root node.
 -- | The best child is the child with the highest win value
-bestChild :: SearchTree -> SearchTree
---bestChild = maximum . subForest
-bestChild = undefined
+bestChild :: SearchTree -> SearchNode
+bestChild = maximum . map rootLabel . subForest
 
 -- | Returns the index of the best child node
 bestChildIndex :: SearchTree -> Int
---bestChildIndex = elemIndex . bestChild
-bestChildIndex = undefined
+bestChildIndex tree = case elemIndex bChild children of
+                        Nothing      -> error "should not happen"
+                        (Just index) -> index
+  where bChild   = bestChild tree
+        children = map rootLabel . subForest $ tree
 
 
 
