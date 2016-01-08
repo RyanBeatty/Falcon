@@ -39,6 +39,9 @@ instance Arbitrary [Square] where
                     empty  = pure (replicate (numRows-n) emptySquare) :: Gen [Square]
                 (++) <$> empty <*> filled
 
+-- | Generates a random valid random Board by
+-- | making sure that the difference between the number
+-- | of red and black squares is less than or equal to 1
 instance Arbitrary Board where
     arbitrary = vectorOf numCols arbitrary `suchThat` validBoard
         where validBoard board = abs (numReds - numBlacks) <= 1
