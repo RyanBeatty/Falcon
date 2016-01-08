@@ -54,7 +54,7 @@ searchNode value count reward action curState =
     _               -> SearchNode value count reward action curState True   
 
 newSearchNode :: Reward -> Action -> GameState -> SearchNode
-newSearchNode reward action curState = searchNode 0 0 reward action curState
+newSearchNode = searchNode 0 0
 
 rootSearchNode :: GameState -> SearchNode
 rootSearchNode = newSearchNode Minus (Move One RedPiece) 
@@ -86,7 +86,8 @@ treePolicy searchTree gen
         
         -- Gets the best child of the current node
         bChild           = case childAt bcIndex searchTree of
-                               (Just child) -> child   
+                               (Just child) -> child
+                               Nothing      -> error "no best child"   
 
 isTerminal :: SearchTree -> Bool
 isTerminal = terminal . rootLabel
@@ -101,26 +102,33 @@ isFullyExpanded tree = (length . subForest $ tree) == length columns
 
 -- | Returns the best child node of a root node.
 -- | The best child is the child with the highest win value
-bestChild :: SearchTree -> SearchNode
-bestChild = undefined
+--bestChild :: SearchTree -> SearchNode
+--bestChild = undefined
 --bestChild = maximum . map rootLabel . subForest
 
 -- | Returns the index of the best child node
-bestChildIndex :: SearchTree -> Int
-bestChildIndex = undefined
+--bestChildIndex :: SearchTree -> Int
+--bestChildIndex = undefined
 --bestChildIndex tree = case elemIndex bChild children of
 --                        Nothing      -> error "should not happen"
 --                        (Just index) -> index
 --  where bChild   = bestChild tree
 --        children = map rootLabel . subForest $ tree
 
-explorationWeight :: Double
-explorationWeight = 1 / (sqrt $ fromIntegral 2)
+cp :: Double
+cp = 1 / (sqrt $ fromIntegral 2)
 
 childValue :: Double -> Int -> SearchNode -> Double
 childValue weight nParent node = (q/n) + weight * (sqrt $ (2 * log (fromIntegral nParent)) / n)
   where q = fromIntegral (value node) :: Double
         n = fromIntegral (visitCount node) :: Double
+
+bestChildIndex :: SearchTree -> Int
+bestChildIndex tree = case elemIndex (maximum children) children of
+                        (Just index) -> index
+                        Nothing      -> error "no maximum child"
+  where rootVal  = value . rootLabel $ tree
+        children = map (childValue cp rootVal) . map rootLabel . subForest $ tree
 
 ------------------Methods implementing expand------------------
 
