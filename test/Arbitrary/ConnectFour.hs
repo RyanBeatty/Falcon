@@ -31,16 +31,18 @@ newtype RowWonBoard = RowWonBoard {
 
 -- | Arbitrary instance for Pieces. Either a RedPiece or BlackPiece is generated
 instance Arbitrary Piece where
-    arbitrary = oneof [return redPiece, return blackPiece]
+    arbitrary = elements [redPiece, blackPiece]
 
 -- | Arbitrary generator for Squares. Either emptysquares, redsquares, or blacksquares are returned
 instance Arbitrary Square where
-    arbitrary = oneof [return emptySquare, return redSquare, return blackSquare]
+    arbitrary = elements [emptySquare, redSquare, blackSquare]
+
+instance Arbitrary Column where
+    arbitrary = elements columns
 
 -- | Arbitrary generator for Move. Generates a move with a random column and piece
 instance Arbitrary Move where
-    arbitrary = liftM2 move columns arbitrary
-        where columns = oneof $ map (return) [(One)..(Seven)]
+    arbitrary = move <$> arbitrary <*> arbitrary
 
 -- | Arbitrary generator for FilledBoard. generates a random, non-empty board
 instance Arbitrary FilledBoard where
