@@ -44,12 +44,27 @@ instance Arbitrary [Square] where
 -- | of red and black squares is less than or equal to 1
 instance Arbitrary Board where
     arbitrary = vectorOf numCols arbitrary `suchThat` validBoard
-        where validBoard board = abs (numReds - numBlacks) <= 1
-                where countColor color = foldr (\row acc -> (+) acc . length $ filter (== color) row) 0 board
-                      numReds          = countColor redSquare
-                      numBlacks        = countColor blackSquare 
+        where validBoard board = numReds - numBlacks == 1 || numReds - numBlacks == 0
+                where numReds   = countColor redSquare board 
+                      numBlacks = countColor blackSquare board
 
+instance Arbitrary GameState where
+    arbitrary = oneof [
+          return gameDraw
+        , gameWon <$> arbitrary
+        , genGameState 
+        ]
+        where genGameState = do
+                board <- arbitrary :: Gen Board
+                let redCount   = countColor redSquare board
+                    blackCount = countColor blackSquare board
+                if redCount == blackCount then
+                    return $ gameState board redPiece
+                else
+                    return $ gameState board blackPiece 
 
+countColor :: Square -> Board -> Int
+countColor color board = foldr (\row acc -> (+) acc . length $ filter (== color) row) 0 board
 -----------------Need to refactor below-----------------
 
 

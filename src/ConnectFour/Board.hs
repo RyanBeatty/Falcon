@@ -17,6 +17,7 @@ type Board = [[Square]]
 data BoardState = BoardPlayable
                 | BoardDraw
                 | BoardWon
+                deriving (Show, Eq)
 
 showBoard :: Board -> String
 showBoard = unlines . (['1'..'7'] :) . map concat . map (map show) . transpose
