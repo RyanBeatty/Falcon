@@ -12,6 +12,31 @@ import ConnectFour.Board
 import ConnectFour.GameState
 import AI.MCTS
 
+-- | Picks a random Piece type
+instance Arbitrary Piece where
+    arbitrary = elements [redPiece, blackPiece]
+
+-- | Picks a random Square
+instance Arbitrary Square where
+    arbitrary = elements [emptySquare, redSquare, blackSquare]
+
+-- | Picks a random column
+instance Arbitrary Column where
+    arbitrary = elements columns
+
+-- | Picks a move with a random column and piece type
+instance Arbitrary Move where
+    arbitrary = move <$> arbitrary <*> arbitrary
+
+
+
+
+
+
+-----------------Need to refactor below-----------------
+
+
+
 -- | Represents a board that has no empty spaces
 newtype FilledBoard = FilledBoard {
         filledBoard :: Board
@@ -28,21 +53,6 @@ newtype ColumnWonBoard = ColumnWonBoard {
 newtype RowWonBoard = RowWonBoard {
         rowWonBoard :: Board    
     } deriving(Show)
-
--- | Arbitrary instance for Pieces. Either a RedPiece or BlackPiece is generated
-instance Arbitrary Piece where
-    arbitrary = elements [redPiece, blackPiece]
-
--- | Arbitrary generator for Squares. Either emptysquares, redsquares, or blacksquares are returned
-instance Arbitrary Square where
-    arbitrary = elements [emptySquare, redSquare, blackSquare]
-
-instance Arbitrary Column where
-    arbitrary = elements columns
-
--- | Arbitrary generator for Move. Generates a move with a random column and piece
-instance Arbitrary Move where
-    arbitrary = move <$> arbitrary <*> arbitrary
 
 -- | Arbitrary generator for FilledBoard. generates a random, non-empty board
 instance Arbitrary FilledBoard where
