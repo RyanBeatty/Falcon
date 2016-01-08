@@ -25,24 +25,6 @@ data SearchNode = SearchNode {
 
 type SearchTree = Tree SearchNode
 
---instance Eq SearchNode where
---  (TerminalNode r1) == (TerminalNode r2) = r1 == r2
---  (TerminalNode _) == _                  = False
---  _ == (TerminalNode _)                  = False
---  (SearchNode a1 b1 c1 d1 e1) == (SearchNode a2 b2 c2 d2 e2) = (a1==a2) && 
---                                                               (b1==b2) && 
---                                                               (c1==c2) && 
---                                                               (d1==d2) && 
---                                                               (e1==e2)
-
---instance Ord SearchNode where
---  compare (TerminalNode r1) (TerminalNode r2) = compare r1 r2
---  compare (TerminalNode Plus) _               = GT
---  compare _ (TerminalNode Plus)               = LT
---  compare (TerminalNode _) _                  = LT
---  compare _                (TerminalNode _)   = LT
---  compare (SearchNode v1 _ _ _ _) (SearchNode v2 _ _ _ _) = compare v1 v2
-
 emptyTree :: SearchNode -> SearchTree
 emptyTree node = Node node []
 
@@ -91,29 +73,11 @@ treePolicy searchTree gen
 
 isTerminal :: SearchTree -> Bool
 isTerminal = terminal . rootLabel
---isTerminal tree = case rootLabel tree of
---                    (TerminalNode _) -> True
---                    _                -> False
 
 -- | A node is fully expanded if it has the same amount of children
 -- | as there are Column choices.
 isFullyExpanded :: SearchTree -> Bool
 isFullyExpanded tree = (length . subForest $ tree) == length columns
-
--- | Returns the best child node of a root node.
--- | The best child is the child with the highest win value
---bestChild :: SearchTree -> SearchNode
---bestChild = undefined
---bestChild = maximum . map rootLabel . subForest
-
--- | Returns the index of the best child node
---bestChildIndex :: SearchTree -> Int
---bestChildIndex = undefined
---bestChildIndex tree = case elemIndex bChild children of
---                        Nothing      -> error "should not happen"
---                        (Just index) -> index
---  where bChild   = bestChild tree
---        children = map rootLabel . subForest $ tree
 
 cp :: Double
 cp = 1 / (sqrt $ fromIntegral 2)
