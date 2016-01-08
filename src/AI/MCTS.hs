@@ -113,7 +113,11 @@ bestChildIndex tree = case elemIndex bChild children of
   where bChild   = bestChild tree
         children = map rootLabel . subForest $ tree
 
-
+childValue :: Int -> SearchNode -> Double
+childValue nParent node = (q/n) + cp * (sqrt $ (2 * log (fromIntegral nParent)) / n)
+  where cp    = 1 / (sqrt $ fromIntegral 2)
+        q     = fromIntegral (value node) :: Double
+        n     = fromIntegral (visitCount node) :: Double
 
 ------------------Methods implementing expand------------------
 
