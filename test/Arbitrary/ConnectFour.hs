@@ -1,3 +1,4 @@
+{-# LANGUAGE FlexibleInstances #-}
 module Arbitrary.ConnectFour where
 
 import Test.Tasty.QuickCheck as QC
@@ -20,6 +21,16 @@ instance Arbitrary Piece where
 instance Arbitrary Square where
     arbitrary = elements [emptySquare, redSquare, blackSquare]
 
+instance Arbitrary [Square] where
+    arbitrary = frequency [(1, emptyRow), (7, randomRow)]
+        where emptyRow = return $ replicate numRows emptySquare
+              randomRow = do
+                n <- choose (1,numRows) :: Gen Int
+                let filled = vectorOf n $ elements [redSquare, blackSquare]
+                    empty  = pure (replicate (numRows-n) emptySquare) :: Gen [Square]
+                (++) <$> empty <*> filled
+
+
 -- | Picks a random column
 instance Arbitrary Column where
     arbitrary = elements columns
@@ -27,10 +38,6 @@ instance Arbitrary Column where
 -- | Picks a move with a random column and piece type
 instance Arbitrary Move where
     arbitrary = move <$> arbitrary <*> arbitrary
-
-
-
-
 
 
 -----------------Need to refactor below-----------------
