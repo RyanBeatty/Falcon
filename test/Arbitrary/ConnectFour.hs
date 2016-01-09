@@ -67,6 +67,12 @@ instance Arbitrary GameState where
 
 countColor :: Square -> Board -> Int
 countColor color board = foldr (\row acc -> (+) acc . length $ filter (== color) row) 0 board
+
+genMoveFromBoard :: Board -> Gen Move
+genMoveFromBoard board = if moves == [] then return (move One redPiece) else elements moves  
+    where moves = map square2Move . filter ((/=) [] . snd) . zip columns . map (filter (/= emptySquare)) $ board
+          square2Move (c, (s:ss)) = move c $ case squarePiece  s of
+                                                (Just p) -> p  
 -----------------Need to refactor below-----------------
 
 

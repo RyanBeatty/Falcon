@@ -3,7 +3,9 @@ module ConnectFour.Square where
 import ConnectFour.Piece
 
 -- | A Square can either have a Piece or be empty
-newtype Square = Square (Maybe Piece)
+newtype Square = Square {
+		squarePiece :: Maybe Piece
+	}
     deriving (Eq)
 
 instance Show Square where
