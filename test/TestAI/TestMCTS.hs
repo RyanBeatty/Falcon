@@ -5,6 +5,8 @@ import Test.Tasty.HUnit
 import Test.Tasty.QuickCheck as QC
 
 import Arbitrary.MCTS
+import ConnectFour
+import AI.MCTS
 
 -- | Entire test suite
 mctsTests :: TestTree
@@ -14,6 +16,12 @@ mctsTests = testGroup "MCTS: Tests" [
 
         --, QC.testProperty "chooseAction `elem` possibleActions" $
         --    \tree gen -> (fst $ chooseAction (fmap expandingNode tree) (mkStdGen gen)) `elem` (possibleActions . expandingNode . rootLabel) tree 
+
+          QC.testProperty "visitCount updatedNode > originalNode" $
+            \node reward -> (visitCount . updateNode reward $ node) == visitCount node + 1
+
+        , QC.testProperty "possibleActions == validColumns" $
+            \node -> (map column . possibleActions $ node) == (validColumns . state $ node)
     ]
 
 -- | all QuickCheck and SmallCheck property tests

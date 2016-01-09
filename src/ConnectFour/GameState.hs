@@ -26,7 +26,8 @@ initialGameState = gameState initialBoard redPiece
 
 -- | Returns a list of valid columns to place a piece in
 validColumns :: GameState -> [Column]
-validColumns gstate = emptyColumns (board gstate)
+validColumns (GameState board _) = emptyColumns board
+validColumns _                   = []
 
 -- | Makes a move and updates the state of the game
 updateGameState :: GameState -> Move -> Maybe GameState
