@@ -179,10 +179,11 @@ simulate node gen
 ------------------Methods implementing backUp------------------
 
 backUp :: Reward -> TreePos Full SearchNode -> StdGen -> (TreePos Full SearchNode, StdGen)
-backUp reward searchTree gen = case parent updatedTree of
-                                  Nothing           -> (updatedTree, gen)
-                                  (Just parentTree) -> backUp reward parentTree gen
-    where updatedTree = modifyTree (updateTree reward) searchTree
+backUp reward searchTree gen = 
+  case parent updatedTree of
+    Nothing           -> (updatedTree, gen)
+    (Just parentTree) -> backUp reward parentTree gen
+  where updatedTree = modifyTree (updateTree reward) searchTree
 
 updateTree :: Reward -> SearchTree -> SearchTree
 updateTree reward tree = tree {rootLabel= updateNode reward (rootLabel tree)}
