@@ -65,9 +65,11 @@ instance Arbitrary GameState where
                 else
                     return $ gameState board blackPiece 
 
+-- | Counts the number of a certain type of squares in a board
 countColor :: Square -> Board -> Int
 countColor color board = foldr (\row acc -> (+) acc . length $ filter (== color) row) 0 board
 
+-- | Generates a random Move that was just played based on a Board
 genMoveFromBoard :: Board -> Gen Move
 genMoveFromBoard board = if moves == [] then return (move One redPiece) else elements moves  
     where moves = map square2Move . filter ((/=) [] . snd) . zip columns . map (filter (/= emptySquare)) $ board
