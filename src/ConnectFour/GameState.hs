@@ -20,6 +20,15 @@ gameDraw = GameDraw
 gameState :: Board -> Piece -> GameState
 gameState = GameState
 
+--gameState :: Board -> Piece -> GameState
+--gameState board piece = 
+--     case getBoardState board of
+--          BoardPlayable -> GameState board (oppositePiece piece)
+--          BoardWon      -> gameWon piece
+--          BoardDraw     -> gameDraw
+
+
+
 -- | initial state of the game
 initialGameState :: GameState
 initialGameState = gameState initialBoard redPiece 
