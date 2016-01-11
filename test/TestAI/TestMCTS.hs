@@ -20,8 +20,8 @@ mctsTests = testGroup "MCTS: Tests" [
           QC.testProperty "visitCount updatedNode > originalNode" $
             \node reward -> (visitCount . updateNode reward $ node) == visitCount node + 1
 
-        , QC.testProperty "possibleActions == validColumns" $
-            \node -> (map column . possibleActions $ node) == (validColumns . state $ node)
+        , QC.testProperty "possibleActions == validMoves" $
+            \node -> (possibleActions $ node) == (validMoves . state $ node)
     ]
 
 -- | all QuickCheck and SmallCheck property tests

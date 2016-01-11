@@ -18,8 +18,16 @@ boardTests = testGroup "Board: Tests" [boardProperties, boardHUnitTests]
 
 -- | all QuickCheck and SmallCheck property tests
 boardProperties :: TestTree
-boardProperties = testGroup "Board: Properties" 
-    [ QC.testProperty "fullboard is not playable" $
+boardProperties = testGroup "Board: Properties" [
+  
+
+      QC.testProperty "canMove to emptyColumns" $
+        propEmptyColumns
+
+
+--------Need to refactor tests under here-------------------
+
+    , QC.testProperty "fullboard is not playable" $
         \board -> checkPlayable (filledBoard board) == False
 
     , QC.testProperty "almost filled board is playable" $
@@ -37,6 +45,9 @@ boardProperties = testGroup "Board: Properties"
     , QC.testProperty "Test that placeSquareInColumn works for multiple inserts" $
         forAll (choose (1, numRows-1)) $ \n -> ((!! n) . iterate (placeSquareInColumn redSquare)) (replicate numRows emptySquare) == (replicate (numRows-n) emptySquare) ++ (replicate n redSquare)
     ]
+
+-- | Tests that a player can move to all columns returned by emptyColumns
+propEmptyColumns board = and . map (flip canMove board) . emptyColumns $ board
 
 
 -- | all HUnit tests

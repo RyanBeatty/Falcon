@@ -32,12 +32,6 @@ gameWon gstate = boardWon == boardState gstate
 initialGameState :: GameState
 initialGameState = gameState redPiece initialBoard 
 
--- | Returns a list of valid columns to place a piece in
-validColumns :: GameState -> [Column]
-validColumns gstate
-     | boardState gstate == boardPlayable = emptyColumns (board gstate)
-     | otherwise                          = []
-
 -- | Returns a list of the valid moves from the current state.
 -- | If the board is not playable, then there are no valid moves
 validMoves :: GameState -> [Move]

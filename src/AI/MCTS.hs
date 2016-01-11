@@ -1,7 +1,7 @@
 module AI.MCTS where
 
 import ConnectFour.GameState
-import ConnectFour.Move (Move(..), Column(..), move, columns)
+import ConnectFour.Move (Move(..), Column(..), columns)
 import ConnectFour.Piece (Piece(..))
 
 import Data.Tree
