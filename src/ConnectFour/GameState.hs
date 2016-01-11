@@ -1,54 +1,44 @@
 module ConnectFour.GameState where
 
+import Control.Applicative
+
 import ConnectFour.Board
 import ConnectFour.Piece
 import ConnectFour.Move
 
-data GameState = GameWon Piece
-               | GameDraw 
-               | GameState 
-               { board :: Board 
-               , activePlayer :: Piece
+data GameState = GameState { 
+                 activePlayer :: Piece
+               , board        :: Board 
+               , boardState   :: BoardState
                } deriving (Show, Eq)
 
-gameWon :: Piece -> GameState
-gameWon = GameWon
+gameState :: Piece -> Board -> GameState
+gameState piece board = GameState piece board (getBoardState board)
 
-gameDraw :: GameState
-gameDraw = GameDraw
+gamePlayable :: GameState -> Bool
+gamePlayable gstate = boardPlayable == boardState gstate
 
-gameState :: Board -> Piece -> GameState
-gameState = GameState
+gameDrawn :: GameState -> Bool
+gameDrawn gstate = boardPlayable == boardState gstate
 
---gameState :: Board -> Piece -> GameState
---gameState board piece = 
---     case getBoardState board of
---          BoardPlayable -> GameState board (oppositePiece piece)
---          BoardWon      -> gameWon piece
---          BoardDraw     -> gameDraw
-
-
+gameWon :: GameState -> Bool
+gameWon gstate = boardWon == boardState gstate
 
 -- | initial state of the game
 initialGameState :: GameState
-initialGameState = gameState initialBoard redPiece 
+initialGameState = gameState redPiece initialBoard 
 
 -- | Returns a list of valid columns to place a piece in
 validColumns :: GameState -> [Column]
-validColumns (GameState board _) = emptyColumns board
-validColumns _                   = []
+validColumns gstate
+     | boardState gstate == boardPlayable = emptyColumns (board gstate)
+     | otherwise                          = []
 
 -- | Makes a move and updates the state of the game
 updateGameState :: GameState -> Move -> Maybe GameState
-updateGameState state move = 
-     board' >>= 
-     \brd -> case getBoardState brd of
-          BoardPlayable -> Just $ GameState brd nextPlayer
-          BoardWon      -> Just $ GameWon curPlayer 
-          BoardDraw     -> Just $ GameDraw
-    where curPlayer  = activePlayer state
-          nextPlayer = oppositePiece curPlayer 
-          board'     = updateBoard move (board state)
+updateGameState gstate move = gameState nextPlayer <$> board'
+    where nextPlayer = oppositePiece (activePlayer gstate) 
+          board'     = updateBoard move (board gstate)
 
 
 

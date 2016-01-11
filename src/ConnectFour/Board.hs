@@ -19,6 +19,10 @@ data BoardState = BoardPlayable
                 | BoardWon
                 deriving (Show, Eq)
 
+boardPlayable = BoardPlayable
+boardDraw = BoardDraw
+boardWon = BoardWon
+
 showBoard :: Board -> String
 showBoard = unlines . (['1'..'7'] :) . map concat . map (map show) . transpose
                   

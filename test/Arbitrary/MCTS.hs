@@ -24,24 +24,21 @@ instance Arbitrary Reward where
 instance Arbitrary SearchNode where
     arbitrary = uncurry3 . uncurry searchNode <$>
                 genValueAndVisitCount <*>   -- gen valid value and visitCount
-                genRewardAndActionAndGameState -- gen valid reward, action, and gamestate
+                (arbitrary >>= genRewardAndActionFromGamestate) -- gen valid reward, action, and gamestate
         where genValueAndVisitCount = do
                 count <- arbitrary `suchThat` (>0)
                 val   <- choose ((-1) * count, count)
                 return (count, val)
 
-              -- | Returns random, valid reward, action, and gamestate
-              genRewardAndActionAndGameState = do
-                gstate <- arbitrary
-                case gstate of
-                    (GameState board p) -> triple <$> genNotDraw <*> genMoveFromBoard board `suchThat` ((/=) p . piece) <*> pure gstate
-                    (GameWon p)         -> triple <$> genNotDraw <*> arbitrary `suchThat` ((==) p . piece) <*> pure gstate
-                    (GameDraw)          -> triple <$> pure Draw  <*> arbitrary <*> pure gstate
-                where genNotDraw = arbitrary `suchThat` (Draw /=)
-                      genMove genM p = genM `suchThat` ((/=) p . piece)
-                      triple a b c = (a,b,c)
-
               uncurry3 f (a,b,c) = uncurry (f a) (b,c)
+
+genRewardAndActionFromGamestate gstate
+    | gameDrawn gstate = triple <$> pure Draw  <*> genMoveFromBoard board' `suchThat` ((/=) curPlayer . piece) <*> pure gstate
+    | otherwise        = triple <$> genNotDraw <*> genMoveFromBoard board' `suchThat` ((/=) curPlayer . piece) <*> pure gstate
+    where genNotDraw   = arbitrary `suchThat` (Draw /=)
+          board'       = board gstate 
+          curPlayer    = activePlayer gstate
+          triple a b c = (a,b,c)
 
 
 --genSearchTree = do

@@ -24,14 +24,10 @@ propCanMoveValidColumns gstate = and . map (flip canMove board') . validColumns 
     where board' = board gstate
 
 propUpdateGameState gstate move' = 
-    move' `elem` map (flip move (activePlayer gstate)) (validColumns gstate) &&
-    isPlayable (fromJust updatedState) ==>
+    move' `elem` map (flip move (activePlayer gstate)) (validColumns gstate) ==>
         updatedState /= Nothing &&
         fmap board updatedState == updateBoard move' (board gstate)
     where updatedState = updateGameState gstate move'
-          isPlayable gs = case gs of
-                            (GameState _ _) -> True
-                            _               -> False
 
 
 -- | all QuickCheck and SmallCheck property tests

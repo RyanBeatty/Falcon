@@ -1,6 +1,6 @@
 module AI.MCTS where
 
-import ConnectFour.GameState (GameState(..), validColumns, activePlayer, updateGameState)
+import ConnectFour.GameState
 import ConnectFour.Move (Move(..), Column(..), move, columns)
 import ConnectFour.Piece (Piece(..))
 
@@ -29,11 +29,10 @@ type SearchTree = Tree SearchNode
 ------------------Constructor methods------------------
 
 searchNode :: Int -> Int -> Reward -> Action -> GameState -> SearchNode
-searchNode value count reward action curState = 
-  case curState of
-    (GameState _ _) -> SearchNode value count reward action curState False
-    (GameDraw)      -> SearchNode value count Draw   action curState True
-    _               -> SearchNode value count reward action curState True   
+searchNode value count reward action gstate 
+  | gamePlayable gstate = SearchNode value count reward action gstate False
+  | gameDrawn gstate    = SearchNode value count Draw   action gstate True
+  | gameWon gstate      = SearchNode value count reward action gstate True
 
 newSearchNode :: Reward -> Action -> GameState -> SearchNode
 newSearchNode = searchNode 0 0

@@ -51,19 +51,14 @@ instance Arbitrary Board where
 -- | Generates a random valid GameState. A playable
 -- | GameState has a random board and correct activePlayer
 instance Arbitrary GameState where
-    arbitrary = oneof [
-          return gameDraw
-        , gameWon <$> arbitrary
-        , genGameState 
-        ]
-        where genGameState = do
-                board <- arbitrary :: Gen Board
-                let redCount   = countColor redSquare board
-                    blackCount = countColor blackSquare board
-                if redCount == blackCount then
-                    return $ gameState board redPiece
-                else
-                    return $ gameState board blackPiece 
+    arbitrary = do
+        board <- arbitrary :: Gen Board
+        let redCount   = countColor redSquare board
+            blackCount = countColor blackSquare board
+        if redCount == blackCount then
+            return $ gameState redPiece board
+        else
+            return $ gameState blackPiece board 
 
 -- | Counts the number of a certain type of squares in a board
 countColor :: Square -> Board -> Int
