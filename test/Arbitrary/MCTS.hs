@@ -3,6 +3,8 @@ module Arbitrary.MCTS where
 import Test.Tasty.QuickCheck as QC
 import Control.Monad
 import Control.Applicative
+import Data.Tree
+import Data.Maybe
 
 import ConnectFour.GameState
 import ConnectFour.Move
@@ -42,3 +44,15 @@ instance Arbitrary SearchNode where
               uncurry3 f (a,b,c) = uncurry (f a) (b,c)
 
 
+--genSearchTree = do
+--    root  <- arbitrary `suchThat` ((==) Minus . reward)
+--    let player   = activePlayer . state $ root
+--        moves    = map (flip move player) columns
+--        states   = map (updateGameState (state root)) moves
+--        choices  = catMaybes $ zipWith (\m s -> (,) m <$> s) moves states
+--    uncurry 
+
+
+    --moves <- sublistOf (possibleActions root)
+    --let children = catMaybe $ map (flip applyAction (state root)) moves
+    --return $ Node root [children]

@@ -7,12 +7,10 @@ main = defaultMain tests
 
 -- | Entire test suite
 tests :: TestTree
-tests = testGroup "Tests" [ 
-	  utilsTests
-    , boardTests
-    , pieceTests
-    , mctsTests
-    ]
+tests = testGroup "Tests" $ concat [
+	  connectFourTests
+	, aiTests
+	]
 
 
 

@@ -1,8 +1,6 @@
-module TestAI (
-          module TestAI.TestMCTS
-    ) where
+module TestAI (aiTests) where
 import TestAI.TestMCTS (mctsTests)
 
-
+aiTests = [mctsTests]
 
 
