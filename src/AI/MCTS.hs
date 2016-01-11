@@ -139,10 +139,7 @@ getChildrenActions = map (action . rootLabel) . subForest
 -- | Returns a list of all of the possible actions that can be chosen
 -- | from a certain SearchNode
 possibleActions :: SearchNode -> [Action]
-possibleActions searchNode = map col2Move $ validColumns gameState
-    where gameState = state searchNode
-          curPlayer = activePlayer gameState
-          col2Move  = flip move curPlayer
+possibleActions = validMoves . state
 
 -- | Updates the current game state with the chosen action
 -- | NOTE: Only use with a valid action
