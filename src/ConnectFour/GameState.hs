@@ -41,6 +41,7 @@ validMoves gstate
      where curPlayer = activePlayer gstate
 
 -- | Makes a move and updates the state of the game
+-- | If the game is over, returns Nothing
 updateGameState :: GameState -> Move -> Maybe GameState
 updateGameState gstate move
      | not (gamePlayable gstate) = Nothing

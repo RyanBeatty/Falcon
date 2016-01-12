@@ -1,3 +1,4 @@
+{-# LANGUAGE FlexibleInstances #-}
 module Arbitrary.MCTS where
 
 import Test.Tasty.QuickCheck as QC
@@ -28,7 +29,7 @@ instance Arbitrary SearchNode where
         where genValueAndVisitCount = do
                 count <- arbitrary `suchThat` (>0)
                 val   <- choose ((-1) * count, count)
-                return (count, val)
+                return (val, count)
 
               uncurry3 f (a,b,c) = uncurry (f a) (b,c)
 
@@ -41,16 +42,13 @@ genRewardAndActionFromGamestate gstate
           triple a b c = (a,b,c)
 
 
---genSearchTree = do
---    root  <- arbitrary `suchThat` ((==) Minus . reward)
---    let player   = activePlayer . state $ root
---        moves    = validMoves (state root)
---        states   = map (updateGameState (state root)) moves
---        choices  = zip moves states
---    children <- sublistOf choices
---    uncurry 
+instance Arbitrary (Tree SearchNode) where
+  arbitrary = arbitrary `suchThat` ((==) Minus . reward) >>= genSearchTreeFromSearchNode
 
-
-    --moves <- sublistOf (possibleActions root)
-    --let children = catMaybe $ map (flip applyAction (state root)) moves
-    --return $ Node root [children]
+genSearchTreeFromSearchNode root = do
+    let nextReward = flipReward $ reward root
+        moves      = validMoves (state root)
+        states     = map (updateGameState (state root)) moves
+        choices    = map emptyTree . catMaybes $ zipWith fmap (map (newSearchNode nextReward) moves) states
+    children <- sublistOf choices
+    return $ Node root children 
