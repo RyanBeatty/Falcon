@@ -22,7 +22,7 @@ gamePlayable gstate = boardPlayable == boardState gstate
 
 -- | Returns true if the game is a draw
 gameDrawn :: GameState -> Bool
-gameDrawn gstate = boardPlayable == boardState gstate
+gameDrawn gstate = boardDrawn == boardState gstate
 
 -- | Returns true if a player has won
 gameWon :: GameState -> Bool

@@ -17,6 +17,9 @@ gameStateTests = testGroup "GameState: Tests" [
 
         , QC.testProperty "board . updateGameState == updateBoard" $
             propUpdateGameState
+
+        , QC.testProperty "updateGameState terminalState == Nothing" $
+            propTerminalUpdate
     ]
 
 -- | tests that the player can make all of the moves returned by validMoves
@@ -30,6 +33,11 @@ propUpdateGameState gstate move' =
         updatedState /= Nothing &&
         fmap board updatedState == updateBoard move' (board gstate)
     where updatedState = updateGameState gstate move'
+
+-- | Test that you cannot continue to make moves if the game is over
+propTerminalUpdate gstate move =
+    gameWon gstate || gameDrawn gstate ==>
+        updateGameState gstate move == Nothing
 
 
 -- | all QuickCheck and SmallCheck property tests

@@ -15,12 +15,12 @@ type Board = [[Square]]
 -- | BoardDraw: The Board is full
 -- | BoardWon: A Player has gotten four-in-a-row
 data BoardState = BoardPlayable
-                | BoardDraw
+                | BoardDrawn
                 | BoardWon
                 deriving (Show, Eq)
 
 boardPlayable = BoardPlayable
-boardDraw = BoardDraw
+boardDrawn = BoardDrawn
 boardWon = BoardWon
 
 showBoard :: Board -> String
@@ -113,7 +113,7 @@ getBoardState :: Board -> BoardState
 getBoardState board
     | checkWon board       = boardWon
     | checkPlayable  board = boardPlayable
-    | otherwise            = boardDraw
+    | otherwise            = boardDrawn
 
 -- | Returns a list of the empty columns on the board
 emptyColumns :: Board -> [Column]
