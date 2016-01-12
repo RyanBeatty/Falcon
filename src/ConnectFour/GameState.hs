@@ -42,7 +42,9 @@ validMoves gstate
 
 -- | Makes a move and updates the state of the game
 updateGameState :: GameState -> Move -> Maybe GameState
-updateGameState gstate move = gameState nextPlayer <$> board'
+updateGameState gstate move
+     | not (gamePlayable gstate) = Nothing
+     | otherwise                 = gameState nextPlayer <$> board'
     where nextPlayer = oppositePiece (activePlayer gstate) 
           board'     = updateBoard move (board gstate)
 

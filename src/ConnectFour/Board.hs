@@ -111,11 +111,11 @@ checkPlayable = or . map (checkColumn)
 -- | or if it is a draw
 getBoardState :: Board -> BoardState
 getBoardState board
-    | checkWon board       = BoardWon
-    | checkPlayable  board = BoardPlayable
-    | otherwise            = BoardDraw
+    | checkWon board       = boardWon
+    | checkPlayable  board = boardPlayable
+    | otherwise            = boardDraw
 
 -- | Returns a list of the empty columns on the board
 emptyColumns :: Board -> [Column]
-emptyColumns board = filter (flip canMove board) [(One)..(Seven)]
+emptyColumns board = filter (flip canMove board) columns
 

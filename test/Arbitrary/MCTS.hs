@@ -44,9 +44,10 @@ genRewardAndActionFromGamestate gstate
 --genSearchTree = do
 --    root  <- arbitrary `suchThat` ((==) Minus . reward)
 --    let player   = activePlayer . state $ root
---        moves    = map (flip move player) columns
+--        moves    = validMoves (state root)
 --        states   = map (updateGameState (state root)) moves
---        choices  = catMaybes $ zipWith (\m s -> (,) m <$> s) moves states
+--        choices  = zip moves states
+--    children <- sublistOf choices
 --    uncurry 
 
 
