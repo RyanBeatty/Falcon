@@ -95,8 +95,8 @@ isFullyExpanded tree = (length . subForest $ tree) == (length . possibleActions 
 cp :: Double
 cp = 1 / (sqrt $ fromIntegral 2)
 
-childValue :: Double -> Int -> SearchNode -> Double
-childValue weight nParent node = (q/n) + weight * (sqrt $ (2 * log (fromIntegral nParent)) / n)
+childValue :: Double -> Double -> SearchNode -> Double
+childValue weight valParent node = (q/n) + weight * (sqrt $ (2 * log valParent) / n)
   where q = fromIntegral (value node) :: Double
         n = fromIntegral (visitCount node) :: Double
 
@@ -107,7 +107,7 @@ bestChildIndex :: SearchTree -> Int
 bestChildIndex tree = case elemIndex (maximum children) children of
                         (Just index) -> index
                         Nothing      -> error "no maximum child"
-  where rootVal  = value . rootLabel $ tree
+  where rootVal  = fromIntegral . value . rootLabel $ tree
         children = map (childValue cp rootVal) . map rootLabel . subForest $ tree
 
 ------------------Methods implementing expand------------------
@@ -122,7 +122,7 @@ expand searchTree gen = (Zipper.insert newNode . children $ searchTree, newGen)
           newReward           = flipReward . reward . rootLabel $ tree'
           (newAction, newGen) = chooseAction tree' gen
           newState            = applyAction curState newAction
-          newNode             = Node (newSearchNode newReward newAction newState) []
+          newNode             = Node (newSearchNode newReward newAction newState) [] 
 
 -- | Chooses a new action to take using the rng and based off
 -- | of which actions have already been chosen 
@@ -188,8 +188,7 @@ updateNode reward node = node {value = newValue, visitCount = newCount}
     where newCount = visitCount node + 1
           newValue = case reward of
                         Plus  -> value node + 1
-                        Minus -> value node - 1
-                        Draw  -> value node 
+                        _     -> value node
 
 
 

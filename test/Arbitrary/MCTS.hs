@@ -5,7 +5,9 @@ import Test.Tasty.QuickCheck as QC
 import Control.Monad
 import Control.Applicative
 import Data.Tree
+import Data.Tree.Zipper
 import Data.Maybe
+import System.Random
 
 import ConnectFour.GameState
 import ConnectFour.Move
@@ -28,7 +30,7 @@ instance Arbitrary SearchNode where
                 (arbitrary >>= genRewardAndActionFromGamestate) -- gen valid reward, action, and gamestate
         where genValueAndVisitCount = do
                 count <- arbitrary `suchThat` (>0)
-                val   <- choose ((-1) * count, count)
+                val   <- choose (0, count)
                 return (val, count)
 
               uncurry3 f (a,b,c) = uncurry (f a) (b,c)
@@ -52,3 +54,10 @@ genSearchTreeFromSearchNode root = do
         choices    = map emptyTree . catMaybes $ zipWith fmap (map (newSearchNode nextReward) moves) states
     children <- sublistOf choices
     return $ Node root children 
+
+
+instance Arbitrary (TreePos Full SearchNode) where
+  arbitrary = fromTree <$> arbitrary
+
+instance Arbitrary StdGen where
+  arbitrary = mkStdGen <$> arbitrary
