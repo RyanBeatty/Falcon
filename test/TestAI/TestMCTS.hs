@@ -3,6 +3,9 @@ module TestAI.TestMCTS where
 import Test.Tasty
 import Test.Tasty.HUnit
 import Test.Tasty.QuickCheck as QC
+import System.Random
+import Data.Tree
+import Data.Set
 
 import Arbitrary.MCTS
 import ConnectFour
@@ -21,8 +24,30 @@ mctsTests = testGroup "MCTS: Tests" [
             \node reward -> (visitCount . updateNode reward $ node) == visitCount node + 1
 
         , QC.testProperty "possibleActions == validMoves" $
-            \node -> (possibleActions $ node) == (validMoves . state $ node)
+            \tree -> (possibleActions tree) == (validMoves . state . rootLabel $ tree)
+
+        --, QC.testProperty "choosenAction is an element of PossibleActions" $
+        --    propChooseAction
+
+        , QC.testProperty "fullyExpanded nodes have maximum length" $
+            propIsFullyExpanded
     ]
+
+-- | Tests that if a root node is fully expanded, then the length
+-- | of its children is the same 
+propIsFullyExpanded t1 =
+    isFullyExpanded t1 ==>
+        length cActions == length pActions &&
+        childSet == possibleSet
+    where cActions    = childrenActions t1
+          pActions    = possibleActions t1
+          childSet    = fromList cActions :: Set Action
+          possibleSet = fromList pActions :: Set Action 
+
+propChooseAction tree seed =
+    (gamePlayable . state . rootLabel $ tree) && (not . isFullyExpanded $ tree) ==>
+        (fst $ chooseAction tree gen) `elem` possibleActions tree
+    where gen    = mkStdGen seed 
 
 -- | all QuickCheck and SmallCheck property tests
 mctsProperties :: TestTree

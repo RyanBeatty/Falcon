@@ -10,7 +10,7 @@ data Column = One
             | Five
             | Six
             | Seven
-        deriving (Show, Enum, Eq)
+        deriving (Show, Enum, Eq, Ord)
 
 columns :: [Column]
 columns = [(One)..(Seven)]
@@ -30,7 +30,7 @@ readColumn _   = Nothing
 data Move = Move 
     { column :: Column
     , piece  :: Piece
-    } deriving (Show, Eq)
+    } deriving (Show, Eq, Ord)
 
 move :: Column -> Piece -> Move
 move = Move 

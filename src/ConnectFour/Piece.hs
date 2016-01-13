@@ -3,7 +3,7 @@ module ConnectFour.Piece where
 -- | A Piece can either be red or black
 data Piece = RedPiece
            | BlackPiece
-        deriving (Eq)
+        deriving (Eq, Ord)
 
 instance Show Piece where
     show RedPiece   = "R"

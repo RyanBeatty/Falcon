@@ -89,7 +89,7 @@ isTerminal = terminal . rootLabel
 -- | A node is fully expanded if it has the same amount of children
 -- | as there are Column choices.
 isFullyExpanded :: SearchTree -> Bool
-isFullyExpanded tree = (length . subForest $ tree) == length columns
+isFullyExpanded tree = (length . subForest $ tree) == (length . possibleActions $ tree)
 
 cp :: Double
 cp = 1 / (sqrt $ fromIntegral 2)
@@ -127,19 +127,19 @@ expand searchTree gen = (Zipper.insert newNode . children $ searchTree, newGen)
 -- | of which actions have already been chosen 
 chooseAction :: SearchTree -> StdGen -> (Action, StdGen)
 chooseAction searchTree gen = (actions !! choice, newGen)
-    where chosen            = getChildrenActions searchTree
-          possible          = possibleActions $ rootLabel searchTree
+    where chosen            = childrenActions searchTree
+          possible          = possibleActions searchTree
           actions           = filter (`notElem` chosen) possible
           (choice, newGen)  = randomR (0, length actions - 1) gen 
 
 -- | Returns a list of all the chosen actions from a root node 
-getChildrenActions :: SearchTree -> [Action]
-getChildrenActions = map (action . rootLabel) . subForest
+childrenActions :: SearchTree -> [Action]
+childrenActions = map (action . rootLabel) . subForest
 
 -- | Returns a list of all of the possible actions that can be chosen
 -- | from a certain SearchNode
-possibleActions :: SearchNode -> [Action]
-possibleActions = validMoves . state
+possibleActions :: SearchTree -> [Action]
+possibleActions = validMoves . state . rootLabel
 
 -- | Updates the current game state with the chosen action
 -- | NOTE: Only use with a valid action
