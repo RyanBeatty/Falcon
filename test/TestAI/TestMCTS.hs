@@ -26,28 +26,33 @@ mctsTests = testGroup "MCTS: Tests" [
         , QC.testProperty "possibleActions == validMoves" $
             \tree -> (possibleActions tree) == (validMoves . state . rootLabel $ tree)
 
-        --, QC.testProperty "choosenAction is an element of PossibleActions" $
-        --    propChooseAction
+        , QC.testProperty "choosenAction is an element of PossibleActions" $
+            propChooseAction
 
-        , QC.testProperty "fullyExpanded nodes have maximum length" $
+        , QC.testProperty "fullyExpanded nodes have chosen all possible actions" $
             propIsFullyExpanded
     ]
 
--- | Tests that if a root node is fully expanded, then the length
--- | of its children is the same 
-propIsFullyExpanded t1 =
-    isFullyExpanded t1 ==>
-        length cActions == length pActions &&
-        childSet == possibleSet
-    where cActions    = childrenActions t1
-          pActions    = possibleActions t1
-          childSet    = fromList cActions :: Set Action
-          possibleSet = fromList pActions :: Set Action 
+-- | Tests that if a root node is fully expanded, then the 
+-- | node has chosen all possible actions
+propIsFullyExpanded t1 t2 =
+    isFullyExpanded t1 && (not . isFullyExpanded $ t2) ==>
+        test t1 && (not . test $ t2)
+    where test t = length cActions == length pActions &&
+                   childSet == possibleSet
+            where cActions    = childrenActions t
+                  pActions    = possibleActions t
+                  childSet    = fromList cActions :: Set Action
+                  possibleSet = fromList pActions :: Set Action 
 
+-- | Tests that chooseAction returns an action that is a possible action
+-- | and that has not been chosen by yet
 propChooseAction tree seed =
     (gamePlayable . state . rootLabel $ tree) && (not . isFullyExpanded $ tree) ==>
-        (fst $ chooseAction tree gen) `elem` possibleActions tree
-    where gen    = mkStdGen seed 
+        action `elem` possibleActions tree &&
+        action `notElem` childrenActions tree
+    where gen    = mkStdGen seed
+          action =  fst $ chooseAction tree gen
 
 -- | all QuickCheck and SmallCheck property tests
 mctsProperties :: TestTree
