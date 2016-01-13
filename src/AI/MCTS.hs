@@ -7,6 +7,7 @@ import ConnectFour.Piece (Piece(..))
 import Data.Tree
 import Data.Tree.Zipper as Zipper
 import Data.List
+import Data.Maybe
 import System.Random
 
 type Action = Move
@@ -120,7 +121,7 @@ expand searchTree gen = (Zipper.insert newNode . children $ searchTree, newGen)
           curState            = state . rootLabel $ tree'
           newReward           = flipReward . reward . rootLabel $ tree'
           (newAction, newGen) = chooseAction tree' gen
-          newState            = applyAction newAction curState
+          newState            = applyAction curState newAction
           newNode             = Node (newSearchNode newReward newAction newState) []
 
 -- | Chooses a new action to take using the rng and based off
@@ -143,10 +144,8 @@ possibleActions = validMoves . state . rootLabel
 
 -- | Updates the current game state with the chosen action
 -- | NOTE: Only use with a valid action
-applyAction :: Action -> GameState -> GameState
-applyAction action oldState = case updateGameState oldState action of
-                                Nothing         -> error "this should not happen"
-                                (Just newState) -> newState
+applyAction :: GameState -> Action -> GameState
+applyAction oldState = fromJust . updateGameState oldState
 
 flipReward :: Reward -> Reward
 flipReward Plus  = Minus
@@ -167,7 +166,7 @@ simulate node gen
   | isTerminal . emptyTree $ node = (reward node, gen)
   | otherwise                     = simulate newNode newGen
   where (newAction, newGen) = chooseAction (emptyTree node) gen
-        newState            = applyAction newAction (state node)
+        newState            = applyAction (state node) newAction
         newReward           = flipReward . reward $ node
         newNode             = newSearchNode newReward newAction newState
 
