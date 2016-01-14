@@ -46,6 +46,7 @@ propIsFullyExpanded t1 t2 =
                   childSet    = fromList cActions :: Set Action
                   possibleSet = fromList pActions :: Set Action
 
+
 propChildValue weight valParent n1 n2 =
     weight > 0 && value n1 > value n2 && visitCount n1 == visitCount n2 ==>
         childValue weight valParent n1 > childValue weight valParent n2 
